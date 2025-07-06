@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Cpo3mrCl+e0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\cicer\\projetos\\DespesaSimples\\despesa-simples-api\\DespesaSimples_API\\DespesaSimples_API\\DespesaSimples_API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\cicer\\.nuget\\packages\\microsoft.dotnet.ilcompiler\\9.0.6\\microsoft.dotnet.ilcompiler.9.0.6.nupkg.sha512",
+    "C:\\Users\\cicer\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.6\\microsoft.net.illink.tasks.9.0.6.nupkg.sha512",
+    "C:\\Users\\cicer\\.nuget\\packages\\runtime.win-x64.microsoft.dotnet.ilcompiler\\9.0.6\\runtime.win-x64.microsoft.dotnet.ilcompiler.9.0.6.nupkg.sha512"
+  ],
+  "logs": []
+}

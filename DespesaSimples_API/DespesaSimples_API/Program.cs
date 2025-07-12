@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Extensions;
 using DespesaSimples_API.Factories;
+using DespesaSimples_API.Repositories;
 using DespesaSimples_API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -101,6 +103,9 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<ITagService, TagService>();
+
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 builder.Services.AddAuthorization();
@@ -120,5 +125,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.RegisterAuthEndpoints();
+app.RegisterTagEndpoints();
 
 app.Run();

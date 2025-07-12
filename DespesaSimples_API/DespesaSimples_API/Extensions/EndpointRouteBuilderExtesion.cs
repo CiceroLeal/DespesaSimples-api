@@ -1,5 +1,7 @@
 ﻿using DespesaSimples_API.Controllers;
+using DespesaSimples_API.Filters;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 namespace DespesaSimples_API.Extensions;
@@ -29,5 +31,31 @@ public static class EndpointRouteBuilderExtension
         authEndpoints.MapPut("/senha", UsuarioController.AlterarSenha)
             .RequireAuthorization()
             .WithName("UpdateSenha");
+    }
+    
+    public static void RegisterTagEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    {
+        var tagEndpoints = endpointRouteBuilder.MapGroup("/tags")
+            .RequireAuthorization();
+        var tagComIdEndpoints = tagEndpoints.MapGroup("/{tagId:int}");
+
+        tagEndpoints.MapGet("", TagController.GetTagsAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetTags");
+
+        tagEndpoints.MapPost("", TagController.CriarTagAsync)
+            .WithName("CreateTag");
+
+        tagComIdEndpoints.MapGet("", TagController.GetTagPorIdAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetTag");
+
+        tagComIdEndpoints.MapDelete("", TagController.DeleteTagPorIdAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("DeleteTag");
+
+        tagComIdEndpoints.MapPut("", TagController.AtualizarTagAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("UpdateTag");
     }
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DespesaSimples_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bfc123428997154a671dbad9110a861ad39df1b1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bb099898135f993d39170064e652797c96a289c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("DespesaSimples_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DespesaSimples_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

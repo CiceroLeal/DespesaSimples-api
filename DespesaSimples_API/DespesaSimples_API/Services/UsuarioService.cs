@@ -1,14 +1,14 @@
-using DespesaSimples_API.Dtos.Auth;
-using DespesaSimples_API.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using DespesaSimples_API.Abstractions.Services;
+using DespesaSimples_API.Dtos.Auth;
+using DespesaSimples_API.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DespesaSimples_API.Services;
 
@@ -18,7 +18,7 @@ public partial class UsuarioService(
     IConfiguration configuration)
     : IUsuarioService
 {
-    public async Task<ResponseDto> RegisterAsync(LoginDto loginDto)
+    public async Task<UsuarioResponseDto> RegisterAsync(LoginDto loginDto)
     {
         var user = new User
         {
@@ -31,7 +31,7 @@ public partial class UsuarioService(
 
         if (!result.Succeeded)
         {
-            return new ResponseDto
+            return new UsuarioResponseDto
             {
                 Errors = result.Errors
             };
@@ -40,7 +40,7 @@ public partial class UsuarioService(
         return await LoginAsync(loginDto);
     }
 
-    public async Task<ResponseDto> LoginAsync(LoginDto loginDto)
+    public async Task<UsuarioResponseDto> LoginAsync(LoginDto loginDto)
     {
         var user = await userManager.FindByEmailAsync(loginDto.Email);
         if (user == null || !await userManager.CheckPasswordAsync(user, loginDto.Senha))
@@ -68,7 +68,7 @@ public partial class UsuarioService(
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new ResponseDto
+        return new UsuarioResponseDto
         {
             Token = tokenString,
             Usuario = new UsuarioDto
@@ -82,46 +82,51 @@ public partial class UsuarioService(
 
     public string GetIdUsuarioAtual()
     {
-        var userId = httpContextAccessor.HttpContext?.User.FindFirst("sub")?.Value;
+        var userId = httpContextAccessor
+            .HttpContext?
+            .User
+            .FindFirst("sub")?
+            .Value;
 
         if (string.IsNullOrEmpty(userId))
-        {
-            userId = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        }
+            userId = httpContextAccessor
+                .HttpContext?
+                .User
+                .FindFirst(ClaimTypes.NameIdentifier)?
+                .Value;
 
         if (string.IsNullOrEmpty(userId))
-        {
             throw new UnauthorizedAccessException("Usuário não autenticado");
-        }
 
         return userId;
     }
 
-    public async Task<ResponseDto> AtualizarUsuarioAsync(UsuarioAtualizacaoDto usuarioAtualizacaoDto)
+    public async Task<UsuarioResponseDto> AtualizarUsuarioAsync(UsuarioAtualizacaoDto usuarioAtualizacaoDto)
     {
         var userId = GetIdUsuarioAtual();
         var user = await userManager.FindByIdAsync(userId);
 
         if (user == null)
-        {
             throw new UnauthorizedAccessException("Usuário não encontrado");
-        }
 
         user.Nome = usuarioAtualizacaoDto.Nome;
         user.Email = usuarioAtualizacaoDto.Email;
-        user.UserName = RegexUsername().Replace(usuarioAtualizacaoDto.Nome, "").Trim().ToLower();
+        user.UserName = RegexUsername()
+            .Replace(usuarioAtualizacaoDto.Nome, "")
+            .Trim()
+            .ToLower();
 
         var result = await userManager.UpdateAsync(user);
 
         if (!result.Succeeded)
         {
-            return new ResponseDto
+            return new UsuarioResponseDto
             {
                 Errors = result.Errors
             };
         }
 
-        return new ResponseDto
+        return new UsuarioResponseDto
         {
             Usuario = new UsuarioDto
             {
@@ -132,28 +137,26 @@ public partial class UsuarioService(
         };
     }
 
-    public async Task<ResponseDto> AlterarSenhaAsync(UsuarioAlteracaoSenhaDto usuarioAlteracaoSenhaDto)
+    public async Task<UsuarioResponseDto> AlterarSenhaAsync(UsuarioAlteracaoSenhaDto usuarioAlteracaoSenhaDto)
     {
         var userId = GetIdUsuarioAtual();
         var user = await userManager.FindByIdAsync(userId);
 
         if (user == null)
-        {
             throw new UnauthorizedAccessException("Usuário não encontrado");
-        }
 
         var result = await userManager.ChangePasswordAsync(user, usuarioAlteracaoSenhaDto.SenhaAtual,
             usuarioAlteracaoSenhaDto.NovaSenha);
 
         if (!result.Succeeded)
         {
-            return new ResponseDto
+            return new UsuarioResponseDto
             {
                 Errors = result.Errors
             };
         }
 
-        return new ResponseDto
+        return new UsuarioResponseDto
         {
             Usuario = new UsuarioDto
             {
@@ -164,21 +167,22 @@ public partial class UsuarioService(
         };
     }
 
-    public async Task<UsuarioDto> ObterUsuarioAtualAsync()
+    public async Task<UsuarioResponseDto> ObterUsuarioAtualAsync()
     {
         var userId = GetIdUsuarioAtual();
         var user = await userManager.FindByIdAsync(userId);
 
         if (user == null)
-        {
             throw new UnauthorizedAccessException("Usuário não encontrado");
-        }
 
-        return new UsuarioDto
+        return new UsuarioResponseDto
         {
-            Id = user.Id,
-            Email = user.Email ?? string.Empty,
-            Nome = user.Nome
+            Usuario = new UsuarioDto
+            {
+                Id = user.Id,
+                Email = user.Email ?? string.Empty,
+                Nome = user.Nome
+            }
         };
     }
 

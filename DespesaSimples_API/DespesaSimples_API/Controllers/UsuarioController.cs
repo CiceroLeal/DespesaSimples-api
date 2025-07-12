@@ -14,13 +14,10 @@ public static class UsuarioController
     )
     {
         var result = await usuarioService.RegisterAsync(loginDto);
-        if (result.Errors.Any())
-        {
-            var errors = result.Errors.Select(e => new ApiError { Code = e.Code, Message = e.Description });
-            return ApiResultsUtil.Error(errors, "Erro ao registrar usuário");
-        }
-
-        return ApiResultsUtil.Success(result, "Usuário registrado com sucesso");
+        
+        return result.Errors.Any() 
+            ? ApiResultsUtil.BadRequest(result, "Erro ao registrar usuário") 
+            : ApiResultsUtil.Success(result, "Usuário registrado com sucesso");
     }
 
     public static async Task<IResult> Login(
@@ -35,7 +32,7 @@ public static class UsuarioController
         }
         catch (UnauthorizedAccessException)
         {
-            return ApiResultsUtil.Unauthorized("Usuário ou senha inválidos.");
+            return ApiResultsUtil.Unauthorized("Usuário ou senha inválidos");
         }
     }
 
@@ -46,13 +43,9 @@ public static class UsuarioController
     {
         var result = await usuarioService.AtualizarUsuarioAsync(usuarioAtualizacaoDto);
 
-        if (result.Errors.Any())
-        {
-            var errors = result.Errors.Select(e => new ApiError { Code = e.Code, Message = e.Description });
-            return ApiResultsUtil.Error(errors, "Erro ao atualizar usuário");
-        }
-
-        return ApiResultsUtil.Success(result, "Usuário atualizado com sucesso");
+        return result.Errors.Any() 
+            ? ApiResultsUtil.BadRequest(result, "Erro ao atualizar usuário") 
+            : ApiResultsUtil.Success(result, "Usuário atualizado com sucesso");
     }
 
     public static async Task<IResult> AlterarSenha(
@@ -63,17 +56,13 @@ public static class UsuarioController
         try
         {
             var result = await usuarioService.AlterarSenhaAsync(usuarioAlteracaoSenhaDto);
-            if (result.Errors.Any())
-            {
-                var errors = result.Errors.Select(e => new ApiError { Code = e.Code, Message = e.Description });
-                return ApiResultsUtil.Error(errors, "Erro ao alterar senha");
-            }
-
-            return ApiResultsUtil.Success(result, "Senha alterada com sucesso");
+            return result.Errors.Any() 
+                ? ApiResultsUtil.BadRequest(result, "Erro ao alterar senha") 
+                : ApiResultsUtil.Success(result, "Senha alterada com sucesso");
         }
         catch (UnauthorizedAccessException)
         {
-            return ApiResultsUtil.Unauthorized("Não autorizado para alterar senha.");
+            return ApiResultsUtil.Unauthorized("Não autorizado para alterar senha");
         }
     }
 
@@ -88,7 +77,7 @@ public static class UsuarioController
         }
         catch (UnauthorizedAccessException)
         {
-            return ApiResultsUtil.Unauthorized("Não autorizado para obter usuário.");
+            return ApiResultsUtil.Unauthorized("Não autorizado para obter usuário");
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace DespesaSimples_API.Dtos.Auth;
 
-public class ResponseDto
+public class UsuarioResponseDto
 {
     public string Token { get; set; } = string.Empty;
     public UsuarioDto Usuario { get; set; } = new ();

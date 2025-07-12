@@ -4,10 +4,10 @@ namespace DespesaSimples_API.Abstractions.Services;
 
 public interface IUsuarioService
 {
-    Task<ResponseDto> RegisterAsync(LoginDto loginDto);
-    Task<ResponseDto> LoginAsync(LoginDto loginDto);
+    Task<UsuarioResponseDto> RegisterAsync(LoginDto loginDto);
+    Task<UsuarioResponseDto> LoginAsync(LoginDto loginDto);
     string GetIdUsuarioAtual();
-    Task<ResponseDto> AtualizarUsuarioAsync(UsuarioAtualizacaoDto usuarioAtualizacaoDto);
-    Task<ResponseDto> AlterarSenhaAsync(UsuarioAlteracaoSenhaDto usuarioAlteracaoSenhaDto);
-    Task<UsuarioDto> ObterUsuarioAtualAsync();
-} 
+    Task<UsuarioResponseDto> AtualizarUsuarioAsync(UsuarioAtualizacaoDto usuarioAtualizacaoDto);
+    Task<UsuarioResponseDto> AlterarSenhaAsync(UsuarioAlteracaoSenhaDto usuarioAlteracaoSenhaDto);
+    Task<UsuarioResponseDto> ObterUsuarioAtualAsync();
+}

@@ -1,4 +1,4 @@
-namespace DespesaSimples_API.Dtos;
+namespace DespesaSimples_API.Dtos.Tag;
 
 public class TagDto
 {

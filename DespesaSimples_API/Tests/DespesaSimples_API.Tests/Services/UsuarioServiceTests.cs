@@ -33,7 +33,7 @@ public class UsuarioServiceTests
     [Fact]
     public async Task RegisterAsync_DeveRetornarUsuarioResponseDtoComToken_QuandoSucesso()
     {
-        var loginDto = new LoginDto { Nome = "Teste", Email = "teste@email.com", Senha = "Senha123!" };
+        var loginDto = new UsuarioCriacaoDto { Nome = "Teste", Email = "teste@email.com", Senha = "Senha123!" };
         var user = new User { Id = "1", Nome = "Teste", Email = "teste@email.com", UserName = "teste" };
 
         _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), loginDto.Senha))
@@ -56,7 +56,7 @@ public class UsuarioServiceTests
     [Fact]
     public async Task RegisterAsync_DeveRetornarUsuarioResponseDtoComErros_QuandoFalha()
     {
-        var loginDto = new LoginDto { Nome = "Teste", Email = "teste@email.com", Senha = "Senha123!" };
+        var loginDto = new UsuarioCriacaoDto { Nome = "Teste", Email = "teste@email.com", Senha = "Senha123!" };
         var identityErrors = new[] { new IdentityError { Description = "Erro" } };
 
         _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), loginDto.Senha))
@@ -72,7 +72,7 @@ public class UsuarioServiceTests
     [Fact]
     public async Task LoginAsync_DeveRetornarUsuarioResponseDtoComToken_QuandoSucesso()
     {
-        var loginDto = new LoginDto { Nome = "Teste", Email = "teste@email.com", Senha = "Senha123!" };
+        var loginDto = new LoginDto { Email = "teste@email.com", Senha = "Senha123!" };
         var user = new User { Id = "1", Nome = "Teste", Email = "teste@email.com", UserName = "teste" };
 
         _userManagerMock.Setup(x => x.FindByEmailAsync(loginDto.Email))

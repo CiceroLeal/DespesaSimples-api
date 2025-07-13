@@ -10,7 +10,7 @@ public static class UsuarioController
 {
     public static async Task<IResult> Register(
         [FromServices] IUsuarioService usuarioService,
-        [FromBody] LoginDto loginDto
+        [FromBody] UsuarioCriacaoDto loginDto
     )
     {
         var result = await usuarioService.RegisterAsync(loginDto);

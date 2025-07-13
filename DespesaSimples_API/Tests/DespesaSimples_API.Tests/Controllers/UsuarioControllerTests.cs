@@ -16,7 +16,7 @@ public class UsuarioControllerTests
     public async Task Register_DeveRetornarSuccess_QuandoNaoHaErros()
     {
         var usuarioService = new Mock<IUsuarioService>();
-        var loginDto = _fixture.Create<LoginDto>();
+        var loginDto = _fixture.Create<UsuarioCriacaoDto>();
         var resultado = new UsuarioResponseDto { Errors = [] };
         usuarioService.Setup(s => s.RegisterAsync(loginDto)).ReturnsAsync(resultado);
 
@@ -29,7 +29,7 @@ public class UsuarioControllerTests
     public async Task Register_DeveRetornarBadRequest_QuandoHaErros()
     {
         var usuarioService = new Mock<IUsuarioService>();
-        var loginDto = _fixture.Create<LoginDto>();
+        var loginDto = _fixture.Create<UsuarioCriacaoDto>();
         var resultado = new UsuarioResponseDto
         {
             Errors = [new IdentityError { Code = "ERR", Description = "Falha" }]

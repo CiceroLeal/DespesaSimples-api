@@ -1,4 +1,4 @@
-﻿namespace DespesaSimples_API.Dtos.Responses;
+﻿namespace DespesaSimples_API.Dtos.Balanco;
 
 public class BalancoResponseDto
 {

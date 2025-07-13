@@ -18,16 +18,16 @@ public partial class UsuarioService(
     IConfiguration configuration)
     : IUsuarioService
 {
-    public async Task<UsuarioResponseDto> RegisterAsync(LoginDto loginDto)
+    public async Task<UsuarioResponseDto> RegisterAsync(UsuarioCriacaoDto registroDto)
     {
         var user = new User
         {
-            Nome = loginDto.Nome ?? string.Empty,
-            UserName = RegexUsername().Replace(loginDto.Nome ?? string.Empty, "").Trim().ToLower(),
-            Email = loginDto.Email
+            Nome = registroDto.Nome ?? string.Empty,
+            UserName = RegexUsername().Replace(registroDto.Nome ?? string.Empty, "").Trim().ToLower(),
+            Email = registroDto.Email
         };
 
-        var result = await userManager.CreateAsync(user, loginDto.Senha);
+        var result = await userManager.CreateAsync(user, registroDto.Senha);
 
         if (!result.Succeeded)
         {
@@ -36,8 +36,12 @@ public partial class UsuarioService(
                 Errors = result.Errors
             };
         }
-
-        return await LoginAsync(loginDto);
+        
+        return await LoginAsync(new LoginDto
+        {
+            Email = registroDto.Email,
+            Senha = registroDto.Senha
+        });
     }
 
     public async Task<UsuarioResponseDto> LoginAsync(LoginDto loginDto)

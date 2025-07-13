@@ -1,5 +1,6 @@
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Dtos;
+using DespesaSimples_API.Dtos.Balanco;
 using DespesaSimples_API.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

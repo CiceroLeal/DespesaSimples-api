@@ -1,11 +1,9 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Dtos;
+using DespesaSimples_API.Dtos.Balanco;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Mappers;
-using DespesaSimples_API.DbContexts;
-using DespesaSimples_API.Dtos.Responses;
-using DespesaSimples_API.Exceptions;
 
 namespace DespesaSimples_API.Services;
 

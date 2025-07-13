@@ -1,7 +1,7 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Dtos;
-using DespesaSimples_API.Dtos.Responses;
+using DespesaSimples_API.Dtos.Tag;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Exceptions;
 
@@ -28,12 +28,9 @@ public class TagService(ITagRepository tagRepository) : ITagService
     {
         var tag = await tagRepository.ObterTagPorIdAsync(id);
 
-        if (tag == null)
-            throw new NotFoundException();
-
         return new TagResponseDto
         {
-            Tags = [new TagDto { IdTag = tag.IdTag, Nome = tag.Nome }]
+            Tags = tag != null ? [new TagDto { IdTag = tag.IdTag, Nome = tag.Nome }] : []
         };
     }
 

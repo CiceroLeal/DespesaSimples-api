@@ -4,7 +4,7 @@ namespace DespesaSimples_API.Abstractions.Services;
 
 public interface IUsuarioService
 {
-    Task<UsuarioResponseDto> RegisterAsync(LoginDto loginDto);
+    Task<UsuarioResponseDto> RegisterAsync(UsuarioCriacaoDto registroDto);
     Task<UsuarioResponseDto> LoginAsync(LoginDto loginDto);
     string GetIdUsuarioAtual();
     Task<UsuarioResponseDto> AtualizarUsuarioAsync(UsuarioAtualizacaoDto usuarioAtualizacaoDto);

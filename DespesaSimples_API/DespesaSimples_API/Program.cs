@@ -63,8 +63,10 @@ app.UseCors("AllowLocalNetwork");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Adiciona endpoints
 app.RegisterAuthEndpoints();
 app.RegisterTagEndpoints();
 app.RegisterBalancoEndpoints();
+app.RegisterCategoriaEndpoints();
 
 app.Run();

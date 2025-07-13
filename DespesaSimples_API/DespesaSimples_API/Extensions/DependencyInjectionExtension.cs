@@ -12,6 +12,9 @@ namespace DespesaSimples_API.Extensions
         {
             services.AddScoped<ITransacaoRepository, TransacaoRepository>();
             
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            services.AddScoped<ICategoriaService, CategoriaService>();
+            
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<ITagService, TagService>();
             

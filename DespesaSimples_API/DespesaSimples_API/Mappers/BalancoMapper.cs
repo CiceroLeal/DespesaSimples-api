@@ -1,4 +1,5 @@
 using DespesaSimples_API.Dtos;
+using DespesaSimples_API.Dtos.Balanco;
 using DespesaSimples_API.Entities;
 
 namespace DespesaSimples_API.Mappers;

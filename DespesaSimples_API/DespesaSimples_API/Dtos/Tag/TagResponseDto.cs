@@ -1,4 +1,4 @@
-﻿namespace DespesaSimples_API.Dtos.Responses;
+﻿namespace DespesaSimples_API.Dtos.Tag;
 
 public class TagResponseDto
 {

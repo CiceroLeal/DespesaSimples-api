@@ -3,7 +3,7 @@ using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Controllers;
 using DespesaSimples_API.Dtos;
 using DespesaSimples_API.Dtos.Auth;
-using DespesaSimples_API.Dtos.Responses;
+using DespesaSimples_API.Dtos.Tag;
 using DespesaSimples_API.Exceptions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
@@ -201,6 +201,6 @@ public class TagControllerTests
 
         var result = await TagController.AtualizarTagAsync(logger.Object, service.Object, 1, tagDto);
 
-        Assert.IsType<BadRequest<string>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
     }
 }

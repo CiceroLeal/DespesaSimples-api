@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using DespesaSimples_API.Abstractions.Repositories;
-using DespesaSimples_API.Dtos;
+using DespesaSimples_API.Dtos.Tag;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Exceptions;
 using DespesaSimples_API.Services;
@@ -47,17 +47,6 @@ public class TagServiceTests
         Assert.NotNull(result);
         Assert.Single(result.Tags);
         Assert.Equal(tag.IdTag, result.Tags.First().IdTag);
-    }
-
-    [Fact]
-    public async Task ObterTagPorIdAsync_DeveLancarNotFoundException_QuandoNaoExiste()
-    {
-        var repo = new Mock<ITagRepository>();
-        repo.Setup(r => r.ObterTagPorIdAsync(It.IsAny<int>())).ReturnsAsync((Tag?)null);
-
-        var service = new TagService(repo.Object);
-
-        await Assert.ThrowsAsync<NotFoundException>(() => service.ObterTagPorIdAsync(1));
     }
 
     [Fact]

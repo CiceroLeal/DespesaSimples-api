@@ -1,5 +1,5 @@
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Dtos;
+using DespesaSimples_API.Dtos.Tag;
 using DespesaSimples_API.Exceptions;
 using DespesaSimples_API.Util;
 using Microsoft.AspNetCore.Http;
@@ -35,10 +35,6 @@ public static class TagController
         {
             var tag = await tagService.ObterTagPorIdAsync(tagId);
             return ApiResultsUtil.Success(tag);
-        }
-        catch (NotFoundException)
-        {
-            return ApiResultsUtil.NotFound("Tag não encontrada");
         }
         catch (Exception ex)
         {
@@ -108,7 +104,7 @@ public static class TagController
         catch (Exception ex)
         {
             logger.LogError(ex, "Erro ao atualizar tag");
-            return TypedResults.BadRequest("Erro ao atualizar tag");
+            return ApiResultsUtil.BadRequest("Erro ao atualizar tag");
         }
     }
 }

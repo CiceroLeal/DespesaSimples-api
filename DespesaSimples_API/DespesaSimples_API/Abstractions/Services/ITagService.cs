@@ -1,5 +1,5 @@
 using DespesaSimples_API.Dtos;
-using DespesaSimples_API.Dtos.Responses;
+using DespesaSimples_API.Dtos.Tag;
 
 namespace DespesaSimples_API.Abstractions.Services;
 

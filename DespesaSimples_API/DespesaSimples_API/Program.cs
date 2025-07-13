@@ -37,78 +37,17 @@ builder.Services.AddIdentity<User, IdentityRole>(options => { options.User.Requi
     .AddErrorDescriber<IdentityPortugueseMessagesExtension>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.SaveToken = true;
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["JWT:ValidAudience"],
-            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-            IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"] ?? string.Empty))
-        };
-    });
+// Configuração do Swagger
+builder.Services.AddCustomSwagger();
 
-builder.Services.AddProblemDetails();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Despesa Simples API",
-        Version = "v1"
-    });
+// Configuração de dependências
+builder.Services.AddCustomDependencies();
 
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
+// Configuração de CORS
+builder.Services.AddCustomCors();
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            }, []
-        }
-    });
-});
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy.WithOrigins("http://192.168.15.10:3000")
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
-});
-
-builder.Services.AddScoped<ITagRepository, TagRepository>();
-builder.Services.AddScoped<ITagService, TagService>();
-
-builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-
-builder.Services.AddAuthorization();
+// Configuração de autenticação/autorização
+builder.Services.AddCustomAuth(builder.Configuration);
 
 var app = builder.Build();
 
@@ -126,5 +65,6 @@ app.UseAuthorization();
 
 app.RegisterAuthEndpoints();
 app.RegisterTagEndpoints();
+app.RegisterBalancoEndpoints();
 
 app.Run();

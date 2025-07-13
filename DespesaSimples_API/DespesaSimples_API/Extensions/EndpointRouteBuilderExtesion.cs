@@ -58,4 +58,18 @@ public static class EndpointRouteBuilderExtension
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .WithName("UpdateTag");
     }
+    
+    public static void RegisterBalancoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    {
+        var balancoEndpoints = endpointRouteBuilder.MapGroup("/balanco")
+            .RequireAuthorization();
+
+        balancoEndpoints.MapGet("", BalancoController.GetBalancoMesAnoAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetBalanco");
+        
+        balancoEndpoints.MapGet("/{ano:int}", BalancoController.GetBalancoAnoAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetBalancoAno");
+    }
 }

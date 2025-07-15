@@ -33,6 +33,32 @@ public static class EndpointRouteBuilderExtension
             .WithName("UpdateSenha");
     }
     
+    public static void RegisterCartaoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    {
+        var cartaoEndpoints = endpointRouteBuilder.MapGroup("/cartoes")
+            .RequireAuthorization();
+        var cartaoComIdEndpoints = cartaoEndpoints.MapGroup("/{cartaoId}");
+
+        cartaoEndpoints.MapGet("", CartaoController.GetCartoesAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetCartoes");
+
+        cartaoEndpoints.MapPost("", CartaoController.CriarCartaoAsync)
+            .WithName("CreateCartoes");
+
+        cartaoComIdEndpoints.MapGet("", CartaoController.GetCartaoPorIdAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetCartao");
+
+        cartaoComIdEndpoints.MapDelete("", CartaoController.DeleteCartaoPorIdAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("DeleteCartoes");
+
+        cartaoComIdEndpoints.MapPut("", CartaoController.AtualizarCartaoAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("UpdateCartoes");
+    }
+    
     public static void RegisterCategoriaEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var categoriaEndpoints = endpointRouteBuilder.MapGroup("/categorias")

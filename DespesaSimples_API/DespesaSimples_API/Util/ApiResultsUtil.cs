@@ -28,12 +28,13 @@ public static class ApiResultsUtil
             statusCode: StatusCodes.Status404NotFound
         );
     
-    public static IResult BadRequest(string? message = null) =>
+    public static IResult BadRequest(string? message = null, List<ApiError>? errors = null) =>
         Results.Json(
             new ApiResponse<object>
             {
                 Success = false,
-                Errors = [new ApiError { Code = "BAD_REQUEST", Message = message ?? "Erro de processamento" }]
+                Errors = errors ?? 
+                         [new ApiError { Code = "BAD_REQUEST", Message = message ?? "Erro de processamento" }]
             },
             statusCode: StatusCodes.Status400BadRequest
         );

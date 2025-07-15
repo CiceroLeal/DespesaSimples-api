@@ -34,12 +34,12 @@ public static class CategoriaController
         try
         {
             var response = await categoriaService.ObterCategoriaDtoPorIdAsync(categoriaId);
-            return ApiResultsUtil.Success(response, "Categorias obtidas com sucesso");
+            return ApiResultsUtil.Success(response, "Categoria obtida com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter categorias");
-            return ApiResultsUtil.BadRequest("Erro ao buscar categorias");
+            logger.LogError(ex, "Erro ao obter categoria");
+            return ApiResultsUtil.BadRequest("Erro ao buscar categoria");
         }
     }
 

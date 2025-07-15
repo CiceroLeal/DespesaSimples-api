@@ -1,3 +1,4 @@
+using DespesaSimples_API.Dtos.Cartao;
 using DespesaSimples_API.Dtos.Categoria;
 using DespesaSimples_API.Enums;
 
@@ -20,5 +21,5 @@ public class TransacaoDto
     public TipoTransacaoEnum? Tipo { get; set; }
     public required List<TransacaoDto> SubTransacoes { get; set; }
     public CategoriaDto? Categoria { get; set; }
-    // public CartaoDto? Cartao { get; set; }
+    public CartaoDto? Cartao { get; set; }
 } 

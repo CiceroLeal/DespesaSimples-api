@@ -68,5 +68,6 @@ app.RegisterAuthEndpoints();
 app.RegisterTagEndpoints();
 app.RegisterBalancoEndpoints();
 app.RegisterCategoriaEndpoints();
+app.RegisterCartaoEndpoints();
 
 app.Run();

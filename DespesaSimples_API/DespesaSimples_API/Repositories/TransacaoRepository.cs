@@ -23,6 +23,12 @@ public class TransacaoRepository : ITransacaoRepository
             t => t.IdCategoria == idCategoria, 
             novoDia, anoAtual, mesAtual);
     
+    public Task<bool> AtualizarDiaTransacoesFuturasPorCartaoAsync(
+        int idCartao, int novoDia, int anoAtual, int mesAtual)
+        => AtualizarDiaTransacoesFuturasAsync(
+            t => t.IdCartao == idCartao, 
+            novoDia, anoAtual, mesAtual);
+    
     private async Task<bool> AtualizarDiaTransacoesFuturasAsync(
         Expression<Func<Transacao, bool>> chaveFilter,
         int novoDia,

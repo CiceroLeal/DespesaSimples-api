@@ -1,26 +1,26 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Dtos;
 using DespesaSimples_API.Dtos.Balanco;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Mappers;
+using DespesaSimples_API.Queries.SomarTransacoesPorTipo;
+using MediatR;
 
 namespace DespesaSimples_API.Services;
 
-public class BalancoService(IBalancoRepository balancoRepository, ITransacaoRepository transacaoRepository)
+public class BalancoService(IBalancoRepository balancoRepository, IMediator mediator)
     : IBalancoService
 {
     public async Task<BalancoResponseDto> ObterPorAnoMesAsync(int ano, int mes)
     {
         var dto = BalancoMapper
             .MapParaDto(await balancoRepository.ObterPorAnoMesAsync(ano, mes) ?? null);
-        
+
         return new BalancoResponseDto
         {
             Balancos = dto != null ? [dto] : []
         };
-    } 
-        
+    }
 
     public async Task<BalancoResponseDto> ObterPorAnoAsync(int ano)
     {
@@ -34,7 +34,7 @@ public class BalancoService(IBalancoRepository balancoRepository, ITransacaoRepo
             .Where(b => b != null)
             .OfType<BalancoDto>()
             .ToList();
-        
+
         return new BalancoResponseDto
         {
             Balancos = dtos
@@ -51,16 +51,21 @@ public class BalancoService(IBalancoRepository balancoRepository, ITransacaoRepo
         // SaldoInicial = saldo final do mês anterior (ou zero se não existir)
         var saldoInicial = prev?.SaldoFinal ?? 0m;
 
-        var receitas = await transacaoRepository.SomarPorTipoAsync(TipoTransacaoEnum.Receita, ano, mes);
-        var despesas = await transacaoRepository.SomarPorTipoAsync(TipoTransacaoEnum.Despesa, ano, mes);
-        
+        var receitas = await mediator.Send(
+            new SomarTransacoesPorTipoQuery(TipoTransacaoEnum.Receita, ano, mes)
+        );
+
+        var despesas = await mediator.Send(
+            new SomarTransacoesPorTipoQuery(TipoTransacaoEnum.Despesa, ano, mes)
+        );
+
         return new BalancoDto(ano, mes, saldoInicial, receitas, despesas);
     }
 
     public async Task<bool> AtualizarBalancoAsync(BalancoDto balancoDto)
     {
         var balanco = BalancoMapper.MapDtoParaEntidade(balancoDto);
-        
+
         if (balanco == null)
             throw new ArgumentException("O balanço não pode ser nulo");
 

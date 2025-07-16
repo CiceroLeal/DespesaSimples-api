@@ -1,19 +1,13 @@
-﻿using DespesaSimples_API.DbContexts;
+﻿using System.Reflection;
+using DespesaSimples_API.DbContexts;
 using DespesaSimples_API.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
-using DespesaSimples_API.Abstractions.Repositories;
-using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Extensions;
 using DespesaSimples_API.Factories;
 using DespesaSimples_API.Middlewares;
-using DespesaSimples_API.Repositories;
-using DespesaSimples_API.Services;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +31,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options => { options.User.Requi
     .AddEntityFrameworkStores<DespesaSimplesDbContext>()
     .AddErrorDescriber<IdentityPortugueseMessagesExtension>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 // Configuração do Swagger
 builder.Services.AddCustomSwagger();

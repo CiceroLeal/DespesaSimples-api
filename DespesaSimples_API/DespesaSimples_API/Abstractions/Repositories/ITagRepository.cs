@@ -11,4 +11,5 @@ public interface ITagRepository
     Task<bool> CriarTagAsync(Tag tag);
     Task<bool> RemoverTagAsync(int id);
     Task<bool> AtualizarTagAsync(Tag tag);
+    Task<List<Tag>> UpsertTagsAsync(List<string> nomesTags);
 } 

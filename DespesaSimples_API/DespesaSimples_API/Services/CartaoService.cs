@@ -1,27 +1,28 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Dtos;
+using DespesaSimples_API.Commands.AtualizarDiaTransacoesFuturas;
 using DespesaSimples_API.Dtos.Cartao;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Exceptions;
 using DespesaSimples_API.Mappers;
 using DespesaSimples_API.Util;
+using MediatR;
 
 namespace DespesaSimples_API.Services;
 
-public class CartaoService(ICartaoRepository cartaoRepository, ITransacaoRepository transacaoRepository)
+public class CartaoService(ICartaoRepository cartaoRepository, IMediator mediator)
     : ICartaoService
 {
     public async Task<CartaoResponseDto> ObterCartoesAsync(int? mes = null, int? ano = null)
     {
         List<Cartao> cartoes;
-        
+
         if (mes != null && ano != null)
             cartoes = await cartaoRepository.BuscarCartoesComGastosDoMesAsync(mes.Value, ano.Value);
         else
             cartoes = await cartaoRepository.BuscarCartoesAsync();
-        
+
         return new CartaoResponseDto
         {
             Cartoes = cartoes.Select(CartaoMapper.MapCartaoParaDto).ToList()
@@ -32,7 +33,7 @@ public class CartaoService(ICartaoRepository cartaoRepository, ITransacaoReposit
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Cartao);
         var cartao = await cartaoRepository.ObterCartaoPorIdAsync(idInt ?? 0);
-        
+
         return new CartaoResponseDto
         {
             Cartoes = cartao != null ? [CartaoMapper.MapCartaoParaDto(cartao)] : []
@@ -59,7 +60,7 @@ public class CartaoService(ICartaoRepository cartaoRepository, ITransacaoReposit
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Cartao);
 
         var cartao = await cartaoRepository.ObterCartaoPorIdAsync(idInt ?? 0);
-        
+
         if (cartao == null)
             throw new NotFoundException();
 
@@ -74,16 +75,17 @@ public class CartaoService(ICartaoRepository cartaoRepository, ITransacaoReposit
 
         var result = await cartaoRepository.AtualizarCartaoAsync(cartao);
 
-        if (!result || diaAnterior == cartaoFormDto.DiaVencimento) 
+        if (!result || diaAnterior == cartaoFormDto.DiaVencimento)
             return result;
-        
+
         // Dia de vencimento do Cartão foi alterado, atualizar transações futuras caso existam
         var dataAtual = DateTime.Now;
-        await transacaoRepository.AtualizarDiaTransacoesFuturasPorCartaoAsync(
+
+        await mediator.Send(new AtualizarDiaTransacoesFuturasCommand(TipoCategoriaEnum.Cartao,
             idInt ?? 0,
             cartaoFormDto.DiaVencimento,
             dataAtual.Year,
-            dataAtual.Month);
+            dataAtual.Month));
 
         return result;
     }

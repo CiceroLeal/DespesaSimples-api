@@ -81,4 +81,22 @@ public class TagRepository : ITagRepository
         await _dsContext.SaveChangesAsync();
         return true;
     }
+    
+    public async Task<List<Tag>> UpsertTagsAsync(List<string> nomesTags)
+    {
+        var tags = new List<Tag>();
+        foreach (var nomeTag in nomesTags)
+        {
+            var tag = await ObterTagPorNomeAsync(nomeTag);
+            if (tag == null)
+            {
+                tag = new Tag { Nome = nomeTag };
+                await CriarTagAsync(tag);
+            }
+
+            tags.Add(tag);
+        }
+
+        return tags;
+    }
 } 

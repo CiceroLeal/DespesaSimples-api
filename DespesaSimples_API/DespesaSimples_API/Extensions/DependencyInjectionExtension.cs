@@ -11,6 +11,7 @@ namespace DespesaSimples_API.Extensions
         public static IServiceCollection AddCustomDependencies(this IServiceCollection services)
         {
             services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+            services.AddScoped<ITransacaoService, TransacaoService>();
             
             services.AddScoped<ICartaoRepository, CartaoRepository>();
             services.AddScoped<ICartaoService, CartaoService>();

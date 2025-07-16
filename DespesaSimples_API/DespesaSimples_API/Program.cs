@@ -10,6 +10,7 @@ using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Extensions;
 using DespesaSimples_API.Factories;
+using DespesaSimples_API.Middlewares;
 using DespesaSimples_API.Repositories;
 using DespesaSimples_API.Services;
 using Microsoft.AspNetCore.Builder;
@@ -62,6 +63,8 @@ app.UseCors("AllowLocalNetwork");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<BadJsonRequestMiddleware>();
 
 // Adiciona endpoints
 app.RegisterAuthEndpoints();

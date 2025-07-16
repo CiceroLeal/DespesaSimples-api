@@ -34,7 +34,7 @@ public static class TagController
         try
         {
             var tag = await tagService.ObterTagPorIdAsync(tagId);
-            return ApiResultsUtil.Success(tag);
+            return ApiResultsUtil.Success(tag, "Tag obtida com sucesso");
         }
         catch (Exception ex)
         {

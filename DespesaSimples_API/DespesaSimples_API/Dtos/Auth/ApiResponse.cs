@@ -1,10 +1,10 @@
 namespace DespesaSimples_API.Dtos.Auth;
 
-public class ApiResponse<T>
+public class ApiResponse<T, E>
 {
     public bool Success { get; set; }
     public T? Data { get; set; }
-    public List<ApiError>? Errors { get; set; }
+    public E? Errors { get; set; }
     public string? Message { get; set; }
 }
 

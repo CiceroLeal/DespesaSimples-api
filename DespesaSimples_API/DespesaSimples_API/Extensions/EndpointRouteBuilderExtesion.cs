@@ -44,6 +44,7 @@ public static class EndpointRouteBuilderExtension
             .WithName("GetCartoes");
 
         cartaoEndpoints.MapPost("", CartaoController.CriarCartaoAsync)
+            .AddEndpointFilter<CartaoDtoValidationFilter>()
             .WithName("CreateCartoes");
 
         cartaoComIdEndpoints.MapGet("", CartaoController.GetCartaoPorIdAsync)
@@ -56,6 +57,7 @@ public static class EndpointRouteBuilderExtension
 
         cartaoComIdEndpoints.MapPut("", CartaoController.AtualizarCartaoAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<CartaoDtoValidationFilter>()
             .WithName("UpdateCartoes");
     }
     
@@ -70,6 +72,7 @@ public static class EndpointRouteBuilderExtension
             .WithName("GetCategorias");
 
         categoriaEndpoints.MapPost("", CategoriaController.CriarCategoriaAsync)
+            .AddEndpointFilter<CategoriaDtoValidationFilter>()
             .WithName("CreateCategoria");
 
         categoriaComIdEndpoints.MapGet("", CategoriaController.GetCategoriaPorIdAsync)
@@ -82,6 +85,7 @@ public static class EndpointRouteBuilderExtension
 
         categoriaComIdEndpoints.MapPut("", CategoriaController.AtualizarCategoriaAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<CategoriaDtoValidationFilter>()
             .WithName("UpdateCategoria");
     }
     
@@ -96,6 +100,7 @@ public static class EndpointRouteBuilderExtension
             .WithName("GetTags");
 
         tagEndpoints.MapPost("", TagController.CriarTagAsync)
+            .AddEndpointFilter<TagDtoValidationFilter>()
             .WithName("CreateTag");
 
         tagComIdEndpoints.MapGet("", TagController.GetTagPorIdAsync)
@@ -108,6 +113,7 @@ public static class EndpointRouteBuilderExtension
 
         tagComIdEndpoints.MapPut("", TagController.AtualizarTagAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<TagDtoValidationFilter>()
             .WithName("UpdateTag");
     }
     

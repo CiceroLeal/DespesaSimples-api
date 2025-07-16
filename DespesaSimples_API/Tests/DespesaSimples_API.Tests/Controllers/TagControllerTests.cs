@@ -25,7 +25,7 @@ public class TagControllerTests
 
         var result = await TagController.GetTagsAsync(logger.Object, service.Object);
 
-        Assert.IsType<Ok<ApiResponse<TagResponseDto>>>(result);
+        Assert.IsType<Ok<ApiResponse<TagResponseDto, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class TagControllerTests
 
         var result = await TagController.GetTagsAsync(logger.Object, service.Object);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class TagControllerTests
 
         var result = await TagController.GetTagPorIdAsync(logger.Object, service.Object, 1);
 
-        Assert.IsType<Ok<ApiResponse<TagResponseDto>>>(result);
+        Assert.IsType<Ok<ApiResponse<TagResponseDto, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class TagControllerTests
 
         var result = await TagController.GetTagPorIdAsync(logger.Object, service.Object, 1);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class TagControllerTests
 
         var result = await TagController.GetTagPorIdAsync(logger.Object, service.Object, 1);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class TagControllerTests
 
         var result = await TagController.DeleteTagPorIdAsync(logger.Object, service.Object, 1);
 
-        Assert.IsType<Ok<ApiResponse<string>>>(result);
+        Assert.IsType<Ok<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class TagControllerTests
 
         var result = await TagController.DeleteTagPorIdAsync(logger.Object, service.Object, 1);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class TagControllerTests
 
         var result = await TagController.DeleteTagPorIdAsync(logger.Object, service.Object, 1);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class TagControllerTests
 
         var result = await TagController.CriarTagAsync(logger.Object, service.Object, tagDto);
 
-        Assert.IsType<Ok<ApiResponse<string>>>(result);
+        Assert.IsType<Ok<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class TagControllerTests
 
         var result = await TagController.CriarTagAsync(logger.Object, service.Object, tagDto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public class TagControllerTests
 
         var result = await TagController.CriarTagAsync(logger.Object, service.Object, tagDto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class TagControllerTests
 
         var result = await TagController.AtualizarTagAsync(logger.Object, service.Object, 1, tagDto);
 
-        Assert.IsType<Ok<ApiResponse<string>>>(result);
+        Assert.IsType<Ok<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -175,7 +175,7 @@ public class TagControllerTests
 
         var result = await TagController.AtualizarTagAsync(logger.Object, service.Object, 1, tagDto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public class TagControllerTests
 
         var result = await TagController.AtualizarTagAsync(logger.Object, service.Object, 1, tagDto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -201,6 +201,6 @@ public class TagControllerTests
 
         var result = await TagController.AtualizarTagAsync(logger.Object, service.Object, 1, tagDto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 }

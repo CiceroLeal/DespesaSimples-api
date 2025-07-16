@@ -22,7 +22,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.Register(usuarioService.Object, loginDto);
 
-        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto>>>(result);
+        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.Register(usuarioService.Object, loginDto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.Login(usuarioService.Object, loginDto);
 
-        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto>>>(result);
+        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.Login(usuarioService.Object, loginDto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.AtualizarUsuario(usuarioService.Object, dto);
 
-        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto>>>(result);
+        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.AtualizarUsuario(usuarioService.Object, dto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.AlterarSenha(usuarioService.Object, dto);
 
-        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto>>>(result);
+        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.AlterarSenha(usuarioService.Object, dto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.AlterarSenha(usuarioService.Object, dto);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.ObterUsuarioAtual(usuarioService.Object);
 
-        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto>>>(result);
+        Assert.IsType<Ok<ApiResponse<UsuarioResponseDto, List<ApiError>>>>(result);
     }
 
     [Fact]
@@ -156,6 +156,6 @@ public class UsuarioControllerTests
 
         var result = await UsuarioController.ObterUsuarioAtual(usuarioService.Object);
 
-        Assert.IsType<JsonHttpResult<ApiResponse<object>>>(result);
+        Assert.IsType<JsonHttpResult<ApiResponse<object, List<ApiError>>>>(result);
     }
 }

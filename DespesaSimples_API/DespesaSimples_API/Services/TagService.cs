@@ -4,19 +4,16 @@ using DespesaSimples_API.Dtos;
 using DespesaSimples_API.Dtos.Tag;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Exceptions;
+using DespesaSimples_API.Mappers;
 
 namespace DespesaSimples_API.Services;
 
 public class TagService(ITagRepository tagRepository) : ITagService
 {
-    public async Task<TagResponseDto> ObterTodasTagsAsync()
+    public async Task<TagResponseDto> BuscarTodasTagsAsync()
     {
-        var tags = await tagRepository.ObterTodasTagsAsync();
-        var tagsDtos = tags.Select(t => new TagDto
-        {
-            IdTag = t.IdTag,
-            Nome = t.Nome
-        }).ToList();
+        var tags = await tagRepository.BuscarTodasTagsAsync();
+        var tagsDtos = tags.Select(TagMapper.MapParaDto).ToList();
 
         return new TagResponseDto
         {
@@ -24,13 +21,13 @@ public class TagService(ITagRepository tagRepository) : ITagService
         };
     }
 
-    public async Task<TagResponseDto> ObterTagPorIdAsync(int id)
+    public async Task<TagResponseDto> BuscarTagPorIdAsync(int id)
     {
-        var tag = await tagRepository.ObterTagPorIdAsync(id);
+        var tag = await tagRepository.BuscarTagPorIdAsync(id);
 
         return new TagResponseDto
         {
-            Tags = tag != null ? [new TagDto { IdTag = tag.IdTag, Nome = tag.Nome }] : []
+            Tags = tag != null ? [TagMapper.MapParaDto(tag)] : []
         };
     }
 
@@ -41,17 +38,14 @@ public class TagService(ITagRepository tagRepository) : ITagService
 
     public async Task<bool> CriarTagAsync(TagDto tagDto)
     {
-        var tag = new Tag
-        {
-            Nome = tagDto.Nome
-        };
+        var tag = TagMapper.MapParaTag(tagDto);
 
         return await tagRepository.CriarTagAsync(tag);
     }
 
     public async Task<bool> AtualizarTagAsync(int id, TagDto tagDto)
     {
-        var tag = await tagRepository.ObterTagPorIdAsync(id);
+        var tag = await tagRepository.BuscarTagPorIdAsync(id);
 
         if (tag == null)
             throw new NotFoundException();
@@ -59,5 +53,22 @@ public class TagService(ITagRepository tagRepository) : ITagService
         tag.Nome = tagDto.Nome;
 
         return await tagRepository.AtualizarTagAsync(tag);
+    }
+    
+    public async Task<List<Tag>> BuscarAtualizarTagsAsync(List<string> nomesTags)
+    {
+        var tags = new List<Tag>();
+        foreach (var nomeTag in nomesTags)
+        {
+            var tag = await tagRepository.BuscarTagPorNomeAsync(nomeTag);
+            if (tag == null)
+            {
+                tag = new Tag { Nome = nomeTag };
+                await tagRepository.CriarTagAsync(tag);
+            }
+            tags.Add(tag);
+        }
+
+        return tags;
     }
 }

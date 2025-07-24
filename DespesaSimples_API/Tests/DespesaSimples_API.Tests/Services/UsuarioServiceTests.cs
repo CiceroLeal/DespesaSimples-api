@@ -190,7 +190,7 @@ public class UsuarioServiceTests
     }
 
     [Fact]
-    public async Task ObterUsuarioAtualAsync_DeveRetornarUsuarioResponseDto_QuandoSucesso()
+    public async Task BuscarUsuarioAtualAsync_DeveRetornarUsuarioResponseDto_QuandoSucesso()
     {
         var user = new User { Id = "1", Nome = "Teste", Email = "teste@email.com" };
 
@@ -200,14 +200,14 @@ public class UsuarioServiceTests
             .ReturnsAsync(user);
 
         var service = CreateService();
-        var result = await service.ObterUsuarioAtualAsync();
+        var result = await service.BuscarUsuarioAtualAsync();
 
         Assert.Equal(user.Nome, result.Usuario.Nome);
         Assert.Equal(user.Email, result.Usuario.Email);
     }
 
     [Fact]
-    public async Task ObterUsuarioAtualAsync_DeveLancarUnauthorizedAccessException_QuandoUsuarioNaoEncontrado()
+    public async Task BuscarUsuarioAtualAsync_DeveLancarUnauthorizedAccessException_QuandoUsuarioNaoEncontrado()
     {
         _httpContextAccessorMock.Setup(x => x.HttpContext)
             .Returns(MockHttpContextWithUserId("1"));
@@ -216,7 +216,7 @@ public class UsuarioServiceTests
 
         var service = CreateService();
 
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => service.ObterUsuarioAtualAsync());
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => service.BuscarUsuarioAtualAsync());
     }
 
     [Fact]

@@ -2,5 +2,5 @@
 
 public class CartaoResponseDto
 {
-    public IEnumerable<CartaoDto> Cartoes { get; set; } = new List<CartaoDto>();
+    public List<CartaoDto> Cartoes { get; set; } = [];
 }

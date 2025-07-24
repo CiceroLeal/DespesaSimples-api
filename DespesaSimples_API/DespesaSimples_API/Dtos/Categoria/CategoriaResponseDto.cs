@@ -2,5 +2,5 @@
 
 public class CategoriaResponseDto
 {
-    public IEnumerable<CategoriaDto> Categorias { get; set; } = new List<CategoriaDto>();
+    public List<CategoriaDto> Categorias { get; set; } = [];
 }

@@ -16,12 +16,15 @@ public static class CategoriaController
     {
         try
         {
-            var response = await categoriaService.ObterCategoriasAsync();
-            return ApiResultsUtil.Success(response, "Categorias obtidas com sucesso");
+            var response = await categoriaService.BuscarCategoriasAsync();
+
+            return response.Categorias.Count == 0
+                ? ApiResultsUtil.NotFound("Nenhuma categoria encontrada")
+                : ApiResultsUtil.Success(response, "Categorias obtidas com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter categorias");
+            logger.LogError(ex, "Erro ao buscar categorias");
             return ApiResultsUtil.BadRequest("Erro ao buscar categorias");
         }
     }
@@ -33,12 +36,15 @@ public static class CategoriaController
     {
         try
         {
-            var response = await categoriaService.ObterCategoriaDtoPorIdAsync(categoriaId);
-            return ApiResultsUtil.Success(response, "Categoria obtida com sucesso");
+            var response = await categoriaService.BuscarCategoriaDtoPorIdAsync(categoriaId);
+            
+            return response.Categorias.Count == 0
+                ? ApiResultsUtil.NotFound("Nenhuma categoria encontrada")
+                : ApiResultsUtil.Success(response, "Categoria obtida com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter categoria");
+            logger.LogError(ex, "Erro ao buscar categoria");
             return ApiResultsUtil.BadRequest("Erro ao buscar categoria");
         }
     }

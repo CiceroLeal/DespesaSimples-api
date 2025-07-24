@@ -11,10 +11,10 @@ namespace DespesaSimples_API.Services;
 public class BalancoService(IBalancoRepository balancoRepository, IMediator mediator)
     : IBalancoService
 {
-    public async Task<BalancoResponseDto> ObterPorAnoMesAsync(int ano, int mes)
+    public async Task<BalancoResponseDto> BuscarPorAnoMesAsync(int ano, int mes)
     {
         var dto = BalancoMapper
-            .MapParaDto(await balancoRepository.ObterPorAnoMesAsync(ano, mes) ?? null);
+            .MapParaDto(await balancoRepository.BuscarPorAnoMesAsync(ano, mes) ?? null);
 
         return new BalancoResponseDto
         {
@@ -22,9 +22,9 @@ public class BalancoService(IBalancoRepository balancoRepository, IMediator medi
         };
     }
 
-    public async Task<BalancoResponseDto> ObterPorAnoAsync(int ano)
+    public async Task<BalancoResponseDto> BuscarPorAnoAsync(int ano)
     {
-        var balancos = await balancoRepository.ObterPorAnoAsync(ano);
+        var balancos = await balancoRepository.BuscarPorAnoAsync(ano);
 
         if (balancos.Count == 0)
             return new BalancoResponseDto();
@@ -46,7 +46,7 @@ public class BalancoService(IBalancoRepository balancoRepository, IMediator medi
         var anoAnterior = mes == 1 ? ano - 1 : ano;
         var mesAnterior = mes == 1 ? 12 : mes - 1;
 
-        var prev = await balancoRepository.ObterPorAnoMesAsync(anoAnterior, mesAnterior);
+        var prev = await balancoRepository.BuscarPorAnoMesAsync(anoAnterior, mesAnterior);
 
         // SaldoInicial = saldo final do mês anterior (ou zero se não existir)
         var saldoInicial = prev?.SaldoFinal ?? 0m;
@@ -69,7 +69,7 @@ public class BalancoService(IBalancoRepository balancoRepository, IMediator medi
         if (balanco == null)
             throw new ArgumentException("O balanço não pode ser nulo");
 
-        var exist = await balancoRepository.ObterPorAnoMesAsync(balanco.Ano, balanco.Mes);
+        var exist = await balancoRepository.BuscarPorAnoMesAsync(balanco.Ano, balanco.Mes);
 
         if (exist == null)
             return await balancoRepository.CriarBalancoAsync(balanco);

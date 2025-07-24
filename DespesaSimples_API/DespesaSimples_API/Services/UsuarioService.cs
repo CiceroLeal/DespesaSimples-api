@@ -171,7 +171,7 @@ public partial class UsuarioService(
         };
     }
 
-    public async Task<UsuarioResponseDto> ObterUsuarioAtualAsync()
+    public async Task<UsuarioResponseDto> BuscarUsuarioAtualAsync()
     {
         var userId = GetIdUsuarioAtual();
         var user = await userManager.FindByIdAsync(userId);

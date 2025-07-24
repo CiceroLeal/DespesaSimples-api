@@ -22,4 +22,27 @@ public class TransacaoDto
     public required List<TransacaoDto> SubTransacoes { get; set; }
     public CategoriaDto? Categoria { get; set; }
     public CartaoDto? Cartao { get; set; }
-} 
+
+    public TransacaoDto Clone()
+    {
+        return new TransacaoDto
+        {
+            IdTransacao = IdTransacao,
+            Descricao = Descricao,
+            Valor = Valor,
+            Dia = Dia,
+            Ano = Ano,
+            Mes = Mes,
+            DataTransacao = DataTransacao,
+            Parcela = Parcela,
+            Status = Status,
+            IdCategoria = IdCategoria,
+            IdCartao = IdCartao,
+            Tags = Tags is not null
+                ? [..Tags]
+                : null,
+            Tipo = Tipo,
+            SubTransacoes = []
+        };
+    }
+}

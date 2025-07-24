@@ -243,7 +243,7 @@ namespace DespesaSimples_API.Migrations
                         new
                         {
                             IdCategoria = 1,
-                            CreatedAt = new DateTime(2025, 7, 6, 14, 8, 55, 988, DateTimeKind.Utc).AddTicks(8634),
+                            CreatedAt = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dia = 30,
                             IsDeleted = false,
                             Nome = "Mercado",
@@ -252,7 +252,7 @@ namespace DespesaSimples_API.Migrations
                         new
                         {
                             IdCategoria = 2,
-                            CreatedAt = new DateTime(2025, 7, 6, 14, 8, 55, 988, DateTimeKind.Utc).AddTicks(8889),
+                            CreatedAt = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dia = 29,
                             IsDeleted = false,
                             Nome = "Eletrodomésticos",
@@ -261,7 +261,7 @@ namespace DespesaSimples_API.Migrations
                         new
                         {
                             IdCategoria = 3,
-                            CreatedAt = new DateTime(2025, 7, 6, 14, 8, 55, 988, DateTimeKind.Utc).AddTicks(9009),
+                            CreatedAt = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dia = 28,
                             IdCategoriaPai = 2,
                             IsDeleted = false,
@@ -316,7 +316,7 @@ namespace DespesaSimples_API.Migrations
                         new
                         {
                             IdTag = 1,
-                            CreatedAt = new DateTime(2025, 7, 6, 14, 8, 55, 988, DateTimeKind.Utc).AddTicks(9583),
+                            CreatedAt = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Nome = "alimentação",
                             UsuarioId = "1"
@@ -324,7 +324,7 @@ namespace DespesaSimples_API.Migrations
                         new
                         {
                             IdTag = 2,
-                            CreatedAt = new DateTime(2025, 7, 6, 14, 8, 55, 988, DateTimeKind.Utc).AddTicks(9693),
+                            CreatedAt = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Nome = "mercado",
                             UsuarioId = "1"
@@ -332,7 +332,7 @@ namespace DespesaSimples_API.Migrations
                         new
                         {
                             IdTag = 3,
-                            CreatedAt = new DateTime(2025, 7, 6, 14, 8, 55, 988, DateTimeKind.Utc).AddTicks(9694),
+                            CreatedAt = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Nome = "besteira",
                             UsuarioId = "1"
@@ -729,6 +729,9 @@ namespace DespesaSimples_API.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<bool>("Finalizada")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int?>("IdCartao")
                         .HasColumnType("int");
 
@@ -773,6 +776,7 @@ namespace DespesaSimples_API.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DataInicio = new DateTime(2025, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Descricao = "Aluguel",
+                            Finalizada = false,
                             IsDeleted = false,
                             Tipo = 0,
                             UsuarioId = "1",
@@ -784,6 +788,7 @@ namespace DespesaSimples_API.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DataInicio = new DateTime(2025, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Descricao = "Aluguel 2",
+                            Finalizada = false,
                             IdCartao = 2,
                             IsDeleted = false,
                             Tipo = 0,
@@ -865,16 +870,16 @@ namespace DespesaSimples_API.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c0b66f0c-738e-4edb-893b-233b486a989e",
+                            ConcurrencyStamp = "9e69b7ad-97ab-47ab-84c8-e0bf26815b8a",
                             Email = "admin@despesasimples.com.br",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Nome = "Admin",
                             NormalizedEmail = "ADMIN@DESPESASIMPLES.COM.BR",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGCo4XC0oyrh5JMjgkTcNG3tc4JzQuMWPIJOFBKlBHI803DErwTelkRkfMIewwCpLQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMC3yCbqGRP2QE0u7G9jZYe3OlaA2qaLN7MZYrz1IEvSKl4NBZUfzJLH+HMtZkZ75A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "73ded48e-73d3-4a04-ae57-42746460a5e0",
+                            SecurityStamp = "3b59eefb-f90e-4fbb-8b2a-b623ae10d737",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

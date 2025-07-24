@@ -20,7 +20,7 @@ public static class EndpointRouteBuilderExtension
             .AllowAnonymous()
             .WithName("Login");
 
-        authEndpoints.MapGet("", UsuarioController.ObterUsuarioAtual)
+        authEndpoints.MapGet("", UsuarioController.BuscarUsuarioAtual)
             .RequireAuthorization()
             .WithName("GetUsuario");
 
@@ -31,6 +31,38 @@ public static class EndpointRouteBuilderExtension
         authEndpoints.MapPut("/senha", UsuarioController.AlterarSenha)
             .RequireAuthorization()
             .WithName("UpdateSenha");
+    }
+    
+    public static void RegisterTransacaoFixaEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    {
+        var transacaoFixaEndpoints = endpointRouteBuilder.MapGroup("/transacoes-fixas")
+            .RequireAuthorization();
+        var transacaoFixaComIdEndpoints = transacaoFixaEndpoints.MapGroup("/{transacaoFixaId:int}");
+
+        transacaoFixaEndpoints.MapGet("", TransacaoFixaController.GetTransacoesFixasAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetTransacoesFixas");
+
+        transacaoFixaEndpoints.MapPost("", TransacaoFixaController.CriarTransacaoFixaAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<TransacaoFixaFormDtoValidationFilter>()
+            .WithName("CreateTransacaoFixa");
+
+        transacaoFixaComIdEndpoints.MapGet("", TransacaoFixaController.GetTransacaoFixaPorIdAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("GetTransacaoFixa");
+
+        // transacaoFixaComIdEndpoints.MapDelete("", TransacaoFixaController.DeleteTransacaoFixaPorIdAsync)
+        //     .AddEndpointFilter<LogNotFoundResponseFilter>()
+        //     .WithName("DeleteTransacaoFixa");
+        //
+        transacaoFixaComIdEndpoints.MapPut("", TransacaoFixaController.AtualizarTransacaoFixaAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<TransacaoFixaFormDtoValidationFilter>()
+            .WithName("UpdateTransacaoFixa");
+        //
+        // transacaoFixaEndpoints.MapPost("/criar-transacoes", TransacaoFixaController.CriarTransacoesParaMesAnoAsync)
+        //     .WithName("CreateTransacoesParaMesAno");
     }
     
     public static void RegisterCartaoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
@@ -44,6 +76,7 @@ public static class EndpointRouteBuilderExtension
             .WithName("GetCartoes");
 
         cartaoEndpoints.MapPost("", CartaoController.CriarCartaoAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
             .AddEndpointFilter<CartaoDtoValidationFilter>()
             .WithName("CreateCartoes");
 
@@ -72,6 +105,7 @@ public static class EndpointRouteBuilderExtension
             .WithName("GetCategorias");
 
         categoriaEndpoints.MapPost("", CategoriaController.CriarCategoriaAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
             .AddEndpointFilter<CategoriaDtoValidationFilter>()
             .WithName("CreateCategoria");
 
@@ -100,6 +134,7 @@ public static class EndpointRouteBuilderExtension
             .WithName("GetTags");
 
         tagEndpoints.MapPost("", TagController.CriarTagAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
             .AddEndpointFilter<TagDtoValidationFilter>()
             .WithName("CreateTag");
 

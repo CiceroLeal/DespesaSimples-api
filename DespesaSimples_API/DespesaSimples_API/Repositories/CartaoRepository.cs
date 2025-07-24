@@ -48,7 +48,7 @@ public class CartaoRepository : ICartaoRepository
         return qq.Select(x => x.Cartao).ToList();
     }
 
-    public async Task<Cartao?> ObterCartaoPorIdAsync(int id)
+    public async Task<Cartao?> BuscarCartaoPorIdAsync(int id)
     {
         return await _dsContext.Cartoes
             .Include(g => g.Categoria)

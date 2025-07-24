@@ -1,6 +1,6 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Commands.AtualizarDiaTransacoesFuturas;
+using DespesaSimples_API.Commands;
 using DespesaSimples_API.Dtos.Categoria;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Exceptions;
@@ -13,7 +13,7 @@ namespace DespesaSimples_API.Services;
 public class CategoriaService(ICategoriaRepository categoriaRepository, IMediator mediator)
     : ICategoriaService
 {
-    public async Task<CategoriaResponseDto> ObterCategoriasAsync()
+    public async Task<CategoriaResponseDto> BuscarCategoriasAsync()
     {
         var categorias = await categoriaRepository.BuscarCategoriasAsync();
 
@@ -23,10 +23,10 @@ public class CategoriaService(ICategoriaRepository categoriaRepository, IMediato
         };
     }
 
-    public async Task<CategoriaResponseDto> ObterCategoriaDtoPorIdAsync(string id)
+    public async Task<CategoriaResponseDto> BuscarCategoriaDtoPorIdAsync(string id)
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria);
-        var categoria = await categoriaRepository.ObterCategoriaPorIdAsync(idInt ?? 0);
+        var categoria = await categoriaRepository.BuscarCategoriaPorIdAsync(idInt ?? 0);
 
         return new CategoriaResponseDto
         {
@@ -53,7 +53,7 @@ public class CategoriaService(ICategoriaRepository categoriaRepository, IMediato
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria);
 
-        var categoria = await categoriaRepository.ObterCategoriaPorIdAsync(idInt ?? 0);
+        var categoria = await categoriaRepository.BuscarCategoriaPorIdAsync(idInt ?? 0);
 
         if (categoria == null)
             throw new NotFoundException();
@@ -83,10 +83,10 @@ public class CategoriaService(ICategoriaRepository categoriaRepository, IMediato
         return result;
     }
 
-    public async Task<CategoriaResponseDto> ObterCategoriaEPaisPorIdAsync(string id)
+    public async Task<CategoriaResponseDto> BuscarCategoriaEPaisPorIdAsync(string id)
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria);
-        var categorias = await categoriaRepository.ObterCategoriaEPaisAsync(idInt ?? 0);
+        var categorias = await categoriaRepository.BuscarCategoriaEPaisAsync(idInt ?? 0);
 
         return new CategoriaResponseDto
         {

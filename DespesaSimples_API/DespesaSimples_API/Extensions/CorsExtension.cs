@@ -11,7 +11,7 @@ namespace DespesaSimples_API.Extensions
                 options.AddPolicy("AllowFrontend",
                     policy =>
                     {
-                        policy.WithOrigins("http://192.168.15.10:3000")
+                        policy.WithOrigins("http://192.168.15.10:3001")
                             .AllowAnyMethod()
                             .AllowAnyHeader();
                     });

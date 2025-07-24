@@ -1,6 +1,6 @@
-namespace DespesaSimples_API.Dtos.Auth;
+namespace DespesaSimples_API.Dtos;
 
-public class ApiResponse<T, E>
+public class ApiResponseDto<T, E>
 {
     public bool Success { get; set; }
     public T? Data { get; set; }

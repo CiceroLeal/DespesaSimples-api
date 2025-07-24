@@ -20,12 +20,15 @@ public static class CartaoController
     {
         try
         {
-            var response = await cartaoService.ObterCartoesAsync(mes, ano);
-            return ApiResultsUtil.Success(response, "Cartões obtidos com sucesso");
+            var response = await cartaoService.BuscarCartoesAsync(mes, ano);
+            
+            return response.Cartoes.Count == 0
+                ? ApiResultsUtil.NotFound("Cartões não encontrados") 
+                : ApiResultsUtil.Success(response, "Cartões obtidos com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter cartões");
+            logger.LogError(ex, "Erro ao buscar cartões");
             return ApiResultsUtil.BadRequest("Erro ao buscar cartões");
         }
     }
@@ -37,12 +40,15 @@ public static class CartaoController
     {
         try
         {
-            var response = await cartaoService.ObterCartaoPorIdAsync(cartaoId);
-            return ApiResultsUtil.Success(response, "Cartão obtido com sucesso");
+            var response = await cartaoService.BuscarCartaoPorIdAsync(cartaoId);
+            
+            return response.Cartoes.Count == 0
+                ? ApiResultsUtil.NotFound("Cartão não encontrado") 
+                : ApiResultsUtil.Success(response, "Cartão obtido com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter cartão");
+            logger.LogError(ex, "Erro ao buscar cartão");
             return ApiResultsUtil.BadRequest("Erro ao buscar cartão");
         }
     }

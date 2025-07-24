@@ -16,26 +16,26 @@ namespace DespesaSimples_API.Repositories
             _dsContext.CurrentUserId = usuarioService.GetIdUsuarioAtual();
         }
         
-        public async Task<Balanco?> ObterPorIdAsync(int id)
+        public async Task<Balanco?> BuscarPorIdAsync(int id)
         {
             return await _dsContext.Balancos
                 .FirstOrDefaultAsync(b => b.IdBalanco == id);
         }
 
-        public async Task<Balanco?> ObterPorAnoMesAsync(int ano, int mes)
+        public async Task<Balanco?> BuscarPorAnoMesAsync(int ano, int mes)
         {
             return await _dsContext.Balancos
                 .FirstOrDefaultAsync(b => b.Ano == ano && b.Mes == mes);
         }
         
-        public async Task<List<Balanco>> ObterPorAnoAsync(int ano)
+        public async Task<List<Balanco>> BuscarPorAnoAsync(int ano)
         {
             return await _dsContext.Balancos
                 .Where(b => b.Ano == ano)
                 .ToListAsync();
         }
 
-        public async Task<List<Balanco>> ObterTodosAsync()
+        public async Task<List<Balanco>> BuscarTodosAsync()
         {
             return await _dsContext.Balancos.ToListAsync();
         }

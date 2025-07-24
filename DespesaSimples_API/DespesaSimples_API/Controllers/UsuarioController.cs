@@ -66,13 +66,13 @@ public static class UsuarioController
         }
     }
 
-    public static async Task<IResult> ObterUsuarioAtual(
+    public static async Task<IResult> BuscarUsuarioAtual(
         [FromServices] IUsuarioService usuarioService
     )
     {
         try
         {
-            var result = await usuarioService.ObterUsuarioAtualAsync();
+            var result = await usuarioService.BuscarUsuarioAtualAsync();
             return ApiResultsUtil.Success(result, "Usuário obtido com sucesso");
         }
         catch (UnauthorizedAccessException)

@@ -9,5 +9,5 @@ public interface IUsuarioService
     string GetIdUsuarioAtual();
     Task<UsuarioResponseDto> AtualizarUsuarioAsync(UsuarioAtualizacaoDto usuarioAtualizacaoDto);
     Task<UsuarioResponseDto> AlterarSenhaAsync(UsuarioAlteracaoSenhaDto usuarioAlteracaoSenhaDto);
-    Task<UsuarioResponseDto> ObterUsuarioAtualAsync();
+    Task<UsuarioResponseDto> BuscarUsuarioAtualAsync();
 }

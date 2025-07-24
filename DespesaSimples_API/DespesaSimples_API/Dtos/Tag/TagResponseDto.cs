@@ -2,5 +2,5 @@
 
 public class TagResponseDto
 {
-    public IEnumerable<TagDto> Tags { get; set; } = new List<TagDto>();
+    public List<TagDto> Tags { get; set; } = [];
 }

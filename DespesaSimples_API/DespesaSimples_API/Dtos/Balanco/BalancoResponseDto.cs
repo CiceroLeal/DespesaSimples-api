@@ -2,5 +2,5 @@
 
 public class BalancoResponseDto
 {
-    public IEnumerable<BalancoDto> Balancos { get; set; } = new List<BalancoDto>();
+    public List<BalancoDto> Balancos { get; set; } = [];
 }

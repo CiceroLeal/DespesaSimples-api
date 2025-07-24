@@ -16,12 +16,15 @@ public static class TagController
     {
         try
         {
-            var response = await tagService.ObterTodasTagsAsync();
-            return ApiResultsUtil.Success(response, "Tags obtidas com sucesso");
+            var response = await tagService.BuscarTodasTagsAsync();
+            
+            return response.Tags.Count == 0
+                ? ApiResultsUtil.NotFound("Nenhuma tag encontrada")
+                : ApiResultsUtil.Success(response, "Tags obtidas com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter tags");
+            logger.LogError(ex, "Erro ao buscar tags");
             return ApiResultsUtil.BadRequest("Erro ao buscar tags");
         }
     }
@@ -33,12 +36,15 @@ public static class TagController
     {
         try
         {
-            var tag = await tagService.ObterTagPorIdAsync(tagId);
-            return ApiResultsUtil.Success(tag, "Tag obtida com sucesso");
+            var response = await tagService.BuscarTagPorIdAsync(tagId);
+            
+            return response.Tags.Count == 0
+                ? ApiResultsUtil.NotFound("Nenhuma tag encontrada")
+                : ApiResultsUtil.Success(response, "Tag obtida com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter tag");
+            logger.LogError(ex, "Erro ao buscar tag");
             return ApiResultsUtil.BadRequest("Erro ao buscar tag");
         }
     }

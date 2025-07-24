@@ -24,7 +24,7 @@ public class CategoriaRepository : ICategoriaRepository
             .ToListAsync();
     }
 
-    public async Task<Categoria?> ObterCategoriaPorIdAsync(int id)
+    public async Task<Categoria?> BuscarCategoriaPorIdAsync(int id)
     {
         return await _dsContext.Categorias
             .Include(g => g.CategoriaPai)
@@ -74,7 +74,7 @@ public class CategoriaRepository : ICategoriaRepository
         return true;
     }
     
-    public async Task<List<Categoria>> ObterCategoriaEPaisAsync(int id)
+    public async Task<List<Categoria>> BuscarCategoriaEPaisAsync(int id)
     {
         var resultado = new List<Categoria>();
         var atual = await _dsContext.Categorias

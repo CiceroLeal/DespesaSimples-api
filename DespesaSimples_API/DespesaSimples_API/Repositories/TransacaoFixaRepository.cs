@@ -17,7 +17,7 @@ public class TransacaoFixaRepository : ITransacaoFixaRepository
         _dsContext.CurrentUserId = usuarioService.GetIdUsuarioAtual();
     }
 
-    public async Task<TransacaoFixa?> ObterTransacaoFixaPorIdAsync(int id)
+    public async Task<TransacaoFixa?> BuscarTransacaoFixaPorIdAsync(int id)
     {
         return await _dsContext.TransacoesFixas
             .Where(t => t.IdTransacaoFixa == id)
@@ -27,7 +27,7 @@ public class TransacaoFixaRepository : ITransacaoFixaRepository
             .FirstOrDefaultAsync();
     }
     
-    public async Task<List<TransacaoFixa>> ObterTransacoesFixasPorMesAnoIdAsync(int mes, int ano, TipoTransacaoEnum? tipo)
+    public async Task<List<TransacaoFixa>> BuscarTransacoesFixasPorMesAnoIdAsync(int mes, int ano, TipoTransacaoEnum? tipo)
     {
         // Define o primeiro e último dia do mês informado.
         var dataInicioMes = new DateTime(ano, mes, 1);
@@ -56,7 +56,7 @@ public class TransacaoFixaRepository : ITransacaoFixaRepository
         return true;
     }
 
-    public async Task<List<TransacaoFixa>> ObterTodasTransacoesFixasAsync()
+    public async Task<List<TransacaoFixa>> BuscarTodasTransacoesFixasAsync()
     {
         return await _dsContext.TransacoesFixas
             .Include(t => t.Tags)

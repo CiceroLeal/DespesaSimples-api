@@ -11,7 +11,7 @@ public sealed class TransacaoFixa : BaseEntity, ITemTags
     [Key]
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int? IdTransacaoFixa { get; set; }
+    public int IdTransacaoFixa { get; set; }
     
     [Required]
     [Column(TypeName = "decimal(18,2)")]
@@ -50,7 +50,7 @@ public sealed class TransacaoFixa : BaseEntity, ITemTags
     public TransacaoFixa(){}
     
     [SetsRequiredMembers]
-    public TransacaoFixa(int? idTransacaoFixa, 
+    public TransacaoFixa(int idTransacaoFixa, 
         decimal valor, 
         string descricao, 
         DateTime dataInicio, 

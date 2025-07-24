@@ -1,6 +1,6 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Commands.AtualizarDiaTransacoesFuturas;
+using DespesaSimples_API.Commands;
 using DespesaSimples_API.Dtos.Cartao;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
@@ -14,7 +14,7 @@ namespace DespesaSimples_API.Services;
 public class CartaoService(ICartaoRepository cartaoRepository, IMediator mediator)
     : ICartaoService
 {
-    public async Task<CartaoResponseDto> ObterCartoesAsync(int? mes = null, int? ano = null)
+    public async Task<CartaoResponseDto> BuscarCartoesAsync(int? mes = null, int? ano = null)
     {
         List<Cartao> cartoes;
 
@@ -29,10 +29,10 @@ public class CartaoService(ICartaoRepository cartaoRepository, IMediator mediato
         };
     }
 
-    public async Task<CartaoResponseDto> ObterCartaoPorIdAsync(string id)
+    public async Task<CartaoResponseDto> BuscarCartaoPorIdAsync(string id)
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Cartao);
-        var cartao = await cartaoRepository.ObterCartaoPorIdAsync(idInt ?? 0);
+        var cartao = await cartaoRepository.BuscarCartaoPorIdAsync(idInt ?? 0);
 
         return new CartaoResponseDto
         {
@@ -59,7 +59,7 @@ public class CartaoService(ICartaoRepository cartaoRepository, IMediator mediato
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Cartao);
 
-        var cartao = await cartaoRepository.ObterCartaoPorIdAsync(idInt ?? 0);
+        var cartao = await cartaoRepository.BuscarCartaoPorIdAsync(idInt ?? 0);
 
         if (cartao == null)
             throw new NotFoundException();

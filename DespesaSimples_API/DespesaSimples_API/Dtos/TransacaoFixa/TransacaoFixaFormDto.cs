@@ -2,7 +2,7 @@ using DespesaSimples_API.Enums;
 
 namespace DespesaSimples_API.Dtos.TransacaoFixa;
 
-public class TransacaoFixaCriacaoDto
+public class TransacaoFixaFormDto
 {
     public decimal Valor { get; set; }
     public required string Descricao { get; set; }

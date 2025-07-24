@@ -18,12 +18,15 @@ public static class BalancoController
     {
         try
         {
-            var response = await balancoService.ObterPorAnoMesAsync(ano, mes);
-            return ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
+            var response = await balancoService.BuscarPorAnoMesAsync(ano, mes);
+            
+            return response.Balancos.Count == 0
+                ? ApiResultsUtil.NotFound("Nenhum balanço encontrado para o mês e ano especificados.") 
+                : ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter balanços");
+            logger.LogError(ex, "Erro ao buscar balanços");
             return ApiResultsUtil.BadRequest("Erro ao buscar balanços");
         }
     }
@@ -35,12 +38,15 @@ public static class BalancoController
     {
         try
         {
-            var response = await balancoService.ObterPorAnoAsync(ano);
-            return ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
+            var response = await balancoService.BuscarPorAnoAsync(ano);
+            
+            return response.Balancos.Count == 0
+                ? ApiResultsUtil.NotFound("Nenhum balanço encontrado para o mês e ano especificados.") 
+                : ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter balanços");
+            logger.LogError(ex, "Erro ao buscar balanços");
             return ApiResultsUtil.BadRequest("Erro ao buscar balanços");
         }
     }

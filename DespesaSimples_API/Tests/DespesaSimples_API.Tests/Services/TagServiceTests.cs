@@ -13,7 +13,7 @@ public class TagServiceTests
     private readonly Fixture _fixture = new();
 
     [Fact]
-    public async Task ObterTodasTagsAsync_DeveRetornarTags()
+    public async Task BuscarTodasTagsAsync_DeveRetornarTags()
     {
         var repo = new Mock<ITagRepository>();
         var tags = new List<Tag>
@@ -22,11 +22,11 @@ public class TagServiceTests
             new() { IdTag = 2, Nome = "Tag2" },
             new() { IdTag = 3, Nome = "Tag3" }
         };
-        repo.Setup(r => r.ObterTodasTagsAsync()).ReturnsAsync(tags);
+        repo.Setup(r => r.BuscarTodasTagsAsync()).ReturnsAsync(tags);
 
         var service = new TagService(repo.Object);
 
-        var result = await service.ObterTodasTagsAsync();
+        var result = await service.BuscarTodasTagsAsync();
 
         Assert.NotNull(result);
         Assert.Equal(3, result.Tags.Count());
@@ -34,15 +34,15 @@ public class TagServiceTests
     }
 
     [Fact]
-    public async Task ObterTagPorIdAsync_DeveRetornarTag_QuandoExiste()
+    public async Task BuscarTagPorIdAsync_DeveRetornarTag_QuandoExiste()
     {
         var repo = new Mock<ITagRepository>();
         var tag = new Tag { IdTag = 1, Nome = "Teste" };
-        repo.Setup(r => r.ObterTagPorIdAsync(tag.IdTag)).ReturnsAsync(tag);
+        repo.Setup(r => r.BuscarTagPorIdAsync(tag.IdTag)).ReturnsAsync(tag);
 
         var service = new TagService(repo.Object);
 
-        var result = await service.ObterTagPorIdAsync(tag.IdTag);
+        var result = await service.BuscarTagPorIdAsync(tag.IdTag);
 
         Assert.NotNull(result);
         Assert.Single(result.Tags);
@@ -108,7 +108,7 @@ public class TagServiceTests
     {
         var repo = new Mock<ITagRepository>();
         var tag = new Tag { IdTag = 1, Nome = "Original" };
-        repo.Setup(r => r.ObterTagPorIdAsync(tag.IdTag)).ReturnsAsync(tag);
+        repo.Setup(r => r.BuscarTagPorIdAsync(tag.IdTag)).ReturnsAsync(tag);
         repo.Setup(r => r.AtualizarTagAsync(It.IsAny<Tag>())).ReturnsAsync(true);
 
         var service = new TagService(repo.Object);
@@ -123,7 +123,7 @@ public class TagServiceTests
     public async Task AtualizarTagAsync_DeveLancarNotFoundException_QuandoTagNaoExiste()
     {
         var repo = new Mock<ITagRepository>();
-        repo.Setup(r => r.ObterTagPorIdAsync(It.IsAny<int>())).ReturnsAsync((Tag?)null);
+        repo.Setup(r => r.BuscarTagPorIdAsync(It.IsAny<int>())).ReturnsAsync((Tag?)null);
 
         var service = new TagService(repo.Object);
         var tagDto = _fixture.Create<TagDto>();

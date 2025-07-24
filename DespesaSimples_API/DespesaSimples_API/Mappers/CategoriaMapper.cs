@@ -20,6 +20,18 @@ public static class CategoriaMapper
             Transacoes = categoria.Transacoes.Select(TransacaoMapper.MapParaDto).ToList()
         };
     }
+    
+    public static Categoria MapDtoParaCategoria(CategoriaDto categoriaDto)
+    {
+        return new Categoria
+        {
+            IdCategoria = IdUtil.ParseIdToInt(categoriaDto.IdCategoria, (char)TipoCategoriaEnum.Categoria),
+            IdCategoriaPai = IdUtil.ParseIdToInt(categoriaDto.IdCategoriaPai, (char)TipoCategoriaEnum.Categoria),
+            Nome = categoriaDto.Nome,
+            Descricao = categoriaDto.Descricao,
+            Dia = categoriaDto.Dia
+        };
+    }
 
     public static Categoria MapCategoriaFormDtoParaCategoria(CategoriaFormDto categoriaFormDto)
     {

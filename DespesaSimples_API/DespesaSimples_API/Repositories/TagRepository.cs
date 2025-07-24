@@ -16,13 +16,13 @@ public class TagRepository : ITagRepository
         _dsContext.CurrentUserId = usuarioService.GetIdUsuarioAtual();
     }
 
-    public async Task<Tag?> ObterTagPorNomeAsync(string nome)
+    public async Task<Tag?> BuscarTagPorNomeAsync(string nome)
     {
         return await _dsContext.Tags
             .FirstOrDefaultAsync(t => t.Nome == nome);
     }
     
-    public async Task<Tag?> ObterTagPorIdAsync(int id)
+    public async Task<Tag?> BuscarTagPorIdAsync(int id)
     {
         return await _dsContext.Tags
             .Include(g => g.Transacoes)
@@ -38,14 +38,14 @@ public class TagRepository : ITagRepository
         return true;
     }
 
-    public async Task<List<Tag>> ObterTagsPorIdsAsync(List<int> ids)
+    public async Task<List<Tag>> BuscarTagsPorIdsAsync(List<int> ids)
     {
         return await _dsContext.Tags
             .Where(t => ids.Contains(t.IdTag))
             .ToListAsync();
     }
 
-    public async Task<List<Tag>> ObterTodasTagsAsync()
+    public async Task<List<Tag>> BuscarTodasTagsAsync()
     {
         return await _dsContext.Tags
             .OrderBy(t => t.Nome)
@@ -87,7 +87,7 @@ public class TagRepository : ITagRepository
         var tags = new List<Tag>();
         foreach (var nomeTag in nomesTags)
         {
-            var tag = await ObterTagPorNomeAsync(nomeTag);
+            var tag = await BuscarTagPorNomeAsync(nomeTag);
             if (tag == null)
             {
                 tag = new Tag { Nome = nomeTag };

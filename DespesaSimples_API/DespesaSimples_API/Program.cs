@@ -64,6 +64,7 @@ app.UseMiddleware<BadJsonRequestMiddleware>();
 
 // Adiciona endpoints
 app.RegisterAuthEndpoints();
+app.RegisterTransacaoFixaEndpoints();
 app.RegisterTagEndpoints();
 app.RegisterBalancoEndpoints();
 app.RegisterCategoriaEndpoints();

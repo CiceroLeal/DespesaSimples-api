@@ -16,6 +16,14 @@ public class TransacaoFixaRepository : ITransacaoFixaRepository
         _dsContext = context;
         _dsContext.CurrentUserId = usuarioService.GetIdUsuarioAtual();
     }
+    
+    public async Task<List<TransacaoFixa>> BuscarTodasTransacoesFixasAsync()
+    {
+        return await _dsContext.TransacoesFixas
+            .Include(t => t.Tags)
+            .OrderBy(t => t.Descricao)
+            .ToListAsync();
+    }
 
     public async Task<TransacaoFixa?> BuscarTransacaoFixaPorIdAsync(int id)
     {
@@ -56,28 +64,6 @@ public class TransacaoFixaRepository : ITransacaoFixaRepository
         return true;
     }
 
-    public async Task<List<TransacaoFixa>> BuscarTodasTransacoesFixasAsync()
-    {
-        return await _dsContext.TransacoesFixas
-            .Include(t => t.Tags)
-            .OrderBy(t => t.Descricao)
-            .ToListAsync();
-    }
-    
-    public async Task<bool> RemoverTransacaoFixaAsync(int id)
-    {
-        var transacaoFixa = await _dsContext.TransacoesFixas
-            .FirstOrDefaultAsync(t => t.IdTransacaoFixa == id);
-        
-        if (transacaoFixa == null)
-            return false;
-        
-        _dsContext.TransacoesFixas.Remove(transacaoFixa);
-        
-        var registrosAfetados = await _dsContext.SaveChangesAsync();
-        return registrosAfetados > 0;
-    }
-
     public async Task<bool> AtualizarTransacaoFixaAsync(TransacaoFixa transacaoFixa)
     {
         var existTransacaoFixa = await _dsContext.TransacoesFixas
@@ -92,5 +78,19 @@ public class TransacaoFixaRepository : ITransacaoFixaRepository
         
         await _dsContext.SaveChangesAsync();
         return true;
+    }
+    
+    public async Task<bool> RemoverTransacaoFixaAsync(int id)
+    {
+        var transacaoFixa = await _dsContext.TransacoesFixas
+            .FirstOrDefaultAsync(t => t.IdTransacaoFixa == id);
+        
+        if (transacaoFixa == null)
+            return false;
+        
+        _dsContext.TransacoesFixas.Remove(transacaoFixa);
+        
+        var registrosAfetados = await _dsContext.SaveChangesAsync();
+        return registrosAfetados > 0;
     }
 } 

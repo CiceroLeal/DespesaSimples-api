@@ -8,9 +8,12 @@ public interface ITransacaoFixaService
     Task<TransacaoFixaResponseDto> BuscarTransacaoFixaPorIdAsync(int id);
     
     Task<bool> CriarTransacaoFixaAsync(TransacaoFixaFormDto dto);
+    Task<bool> CriarTransacoesParaMesAnoAsync(int ano, int mes);
 
     Task<bool> AtualizarTransacaoFixaAsync(
         int id,
         TransacaoFixaFormDto dto,
         bool transacaoAnteriores);
+
+    Task<bool> RemoverTransacaoFixaPorIdAsync(int id, bool transacoesAnteriores);
 } 

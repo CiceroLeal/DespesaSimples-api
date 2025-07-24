@@ -18,4 +18,5 @@ public interface ITransacaoRepository
     Task<bool> AtualizarDiaTransacoesFuturasPorCartaoAsync(int idCartao, int novoDia, int anoAtual, int mesAtual);
     
     Task<bool> RemoverTransacaoAsync(int id);
+    Task<bool> RemoverTransacoesPorIdTransacaoFixaAsync(int idTransacaoFixa);
 }

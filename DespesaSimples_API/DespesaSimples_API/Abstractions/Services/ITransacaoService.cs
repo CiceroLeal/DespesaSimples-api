@@ -19,4 +19,5 @@ public interface ITransacaoService
     Task<bool> AtualizarTransacoesAPartirDaFixaAsync(int idTransacaoFixa, TransacaoDto dto, List<Tag> tags);
     
     Task<bool> RemoverTransacaoPorIdAsync(int id);
+    Task<bool> RemoverTransacoesPorIdTransacaoFixaAsync(int idTransacaoFixa);
 }

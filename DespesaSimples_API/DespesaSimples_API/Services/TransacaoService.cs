@@ -147,4 +147,9 @@ public class TransacaoService(ITransacaoRepository transacaoRepository, IMediato
     {
         return await transacaoRepository.RemoverTransacaoAsync(id);
     }
+    
+    public async Task<bool> RemoverTransacoesPorIdTransacaoFixaAsync(int idTransacaoFixa)
+    {
+       return await transacaoRepository.RemoverTransacoesPorIdTransacaoFixaAsync(idTransacaoFixa);
+    }
 }

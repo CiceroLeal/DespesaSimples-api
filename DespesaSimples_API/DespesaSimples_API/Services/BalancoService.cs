@@ -3,7 +3,7 @@ using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Dtos.Balanco;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Mappers;
-using DespesaSimples_API.Queries.SomarTransacoesPorTipo;
+using DespesaSimples_API.Queries;
 using MediatR;
 
 namespace DespesaSimples_API.Services;

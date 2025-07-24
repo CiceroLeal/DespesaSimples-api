@@ -52,17 +52,20 @@ public static class EndpointRouteBuilderExtension
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .WithName("GetTransacaoFixa");
 
-        // transacaoFixaComIdEndpoints.MapDelete("", TransacaoFixaController.DeleteTransacaoFixaPorIdAsync)
-        //     .AddEndpointFilter<LogNotFoundResponseFilter>()
-        //     .WithName("DeleteTransacaoFixa");
-        //
+        transacaoFixaComIdEndpoints.MapDelete("", TransacaoFixaController.DeleteTransacaoFixaPorIdAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .WithName("DeleteTransacaoFixa");
+        
         transacaoFixaComIdEndpoints.MapPut("", TransacaoFixaController.AtualizarTransacaoFixaAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .AddEndpointFilter<TransacaoFixaFormDtoValidationFilter>()
             .WithName("UpdateTransacaoFixa");
-        //
-        // transacaoFixaEndpoints.MapPost("/criar-transacoes", TransacaoFixaController.CriarTransacoesParaMesAnoAsync)
-        //     .WithName("CreateTransacoesParaMesAno");
+        
+        transacaoFixaEndpoints.MapPost("/criar-transacoes", TransacaoFixaController.CriarTransacoesParaMesAnoAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<MesAnoValidationFilter>()
+            .AddEndpointFilter<TransacaoFixaFormDtoValidationFilter>()
+            .WithName("CreateTransacoesParaMesAno");
     }
     
     public static void RegisterCartaoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)

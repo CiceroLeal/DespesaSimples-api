@@ -95,4 +95,47 @@ public static class TransacaoFixaController
             return ApiResultsUtil.BadRequest("Erro ao atualizar transação fixa");
         }
     }
+
+    public static async Task<IResult> DeleteTransacaoFixaPorIdAsync(
+        ILogger<TransacaoFixaDto> logger,
+        [FromServices] ITransacaoFixaService transacaoFixaService,
+        int transacaoFixaId,
+        [FromQuery(Name = "transacoes")] bool transacoesAnteriores = false)
+    {
+        try
+        {
+            var result =
+                await transacaoFixaService.RemoverTransacaoFixaPorIdAsync(transacaoFixaId, transacoesAnteriores);
+
+            return result
+                ? ApiResultsUtil.Success("Transação fixa apagada com sucesso")
+                : ApiResultsUtil.BadRequest("Erro ao apagar transação fixa");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Erro ao apagar transação fixa");
+            return ApiResultsUtil.BadRequest("Erro ao apagar transação fixa");
+        }
+    }
+
+    public static async Task<IResult> CriarTransacoesParaMesAnoAsync(
+        ILogger<TransacaoFixaDto> logger,
+        [FromServices] ITransacaoFixaService transacaoFixaService,
+        [FromQuery] int ano,
+        [FromQuery] int mes)
+    {
+        try
+        {
+            var result = await transacaoFixaService.CriarTransacoesParaMesAnoAsync(ano, mes);
+
+            return result
+                ? ApiResultsUtil.Success("Transações criadas com sucesso")
+                : ApiResultsUtil.BadRequest("Erro ao criar transações");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Erro ao criar transações");
+            return ApiResultsUtil.BadRequest("Erro ao criar transações");
+        }
+    }
 }

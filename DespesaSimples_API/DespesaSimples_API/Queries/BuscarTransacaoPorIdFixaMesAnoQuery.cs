@@ -2,7 +2,9 @@ using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Dtos.Transacao;
 using MediatR;
 
-namespace DespesaSimples_API.Queries.BuscarTransacaoPorIdFixaMesAno;
+namespace DespesaSimples_API.Queries;
+
+public record BuscarTransacaoPorIdFixaMesAnoQuery(int IdTransacaoFixa, int Mes, int Ano) : IRequest<TransacaoDto?>;
 
 public class BuscarTransacaoPorIdFixaMesAnoQueryHandler(ITransacaoService transacaoService)
     : IRequestHandler<BuscarTransacaoPorIdFixaMesAnoQuery, TransacaoDto?>

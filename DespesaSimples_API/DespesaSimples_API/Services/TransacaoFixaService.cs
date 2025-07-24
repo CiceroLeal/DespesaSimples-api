@@ -8,7 +8,7 @@ using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Exceptions;
 using DespesaSimples_API.Mappers;
-using DespesaSimples_API.Queries.BuscarTransacaoPorIdFixaMesAno;
+using DespesaSimples_API.Queries;
 using DespesaSimples_API.Util;
 using MediatR;
 
@@ -58,10 +58,49 @@ public class TransacaoFixaService(
 
             var tDto = TransacaoFixaMapper.MapTransacaoFixaParaTransacaoDto(transacaoFixa, dto.Finalizada ?? false);
 
-            await mediator.Send(new CriarTransacoesAPartirDaFixaCommand(tDto, dto.DataTermino, tags));
+            var result = await mediator.Send(new CriarTransacoesAPartirDaFixaCommand(tDto, dto.DataTermino, tags));
 
             await transactionManager.CommitAsync();
 
+            return result;
+        }
+        catch
+        {
+            await transactionManager.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<bool> CriarTransacoesParaMesAnoAsync(int ano, int mes)
+    {
+        await transactionManager.BeginTransactionAsync();
+
+        try
+        {
+            var dataReferencia = new DateTime(ano, mes, 1);
+            var transacoesFixas = await transacaoFixaRepository.BuscarTodasTransacoesFixasAsync();
+
+            foreach (var transacaoFixa in transacoesFixas
+                         .Where(transacaoFixa =>
+                             transacaoFixa.DataInicio <= dataReferencia &&
+                             (!transacaoFixa.DataTermino.HasValue || transacaoFixa.DataTermino.Value >= dataReferencia)
+                         )
+                    )
+            {
+                var transacaoExistente = await mediator.Send(
+                    new BuscarTransacaoPorIdFixaMesAnoQuery(transacaoFixa.IdTransacaoFixa, mes, ano));
+
+                if (transacaoExistente != null)
+                    continue;
+
+                var transacaoFixaDto =
+                    TransacaoFixaMapper.MapTransacaoFixaParaTransacaoDto(transacaoFixa);
+
+                if (!await mediator.Send(new CriarTransacaoAPartirDaFixaCommand(transacaoFixaDto)))
+                    throw new Exception("Erro ao criar transação fixa para o mês e ano especificados.");
+            }
+
+            await transactionManager.CommitAsync();
             return true;
         }
         catch
@@ -107,8 +146,9 @@ public class TransacaoFixaService(
             transacaoFixa.Tags = tags;
 
             var result = await transacaoFixaRepository.AtualizarTransacaoFixaAsync(transacaoFixa);
-            
-            var transacaoDto = TransacaoFixaMapper.MapTransacaoFixaParaTransacaoDto(transacaoFixa, dto.Finalizada ?? false);
+
+            var transacaoDto =
+                TransacaoFixaMapper.MapTransacaoFixaParaTransacaoDto(transacaoFixa, dto.Finalizada ?? false);
 
             await LidaComTransacoesAnterioresAsync(
                 transacaoFixa,
@@ -150,15 +190,15 @@ public class TransacaoFixaService(
                 await IncluirOuAtualizarTransacoesAsync(transacaoFixa, transacaoDto, dataNovaInicio);
             else // dataNovaInicio > dataAntigaInicio
                 await ExcluirTransacoesAsync(transacaoFixa, dataAntigaInicio, dataNovaInicio);
-            
+
             if (dataTerminoAlterada)
                 await LidaComDataTerminoAsync(transacaoFixa, transacaoDto, dataTerminoAntiga);
         }
         else
         {
             await mediator.Send(new AtualizarTransacoesAPartirDaFixaCommand(
-                transacaoFixa.IdTransacaoFixa, 
-                transacaoDto, 
+                transacaoFixa.IdTransacaoFixa,
+                transacaoDto,
                 transacaoFixa.Tags?.ToList() ?? []));
         }
 
@@ -170,7 +210,8 @@ public class TransacaoFixaService(
         );
     }
 
-    private async Task LidaComDataTerminoAsync(TransacaoFixa transacaoFixa, TransacaoDto transacaoFixaDto, DateTime? dataTermino)
+    private async Task LidaComDataTerminoAsync(TransacaoFixa transacaoFixa, TransacaoDto transacaoFixaDto,
+        DateTime? dataTermino)
     {
         var dataAtualReferencia = ObterDataReferencia();
         var dataTerminoAntiga = transacaoFixa.DataTermino;
@@ -214,7 +255,7 @@ public class TransacaoFixaService(
         DateTime dataAtualReferencia)
     {
         var ultimaTransacao =
-            await mediator.Send(new ObterUltimaTransacaoPorIdFixaCommand(transacaoFixa.IdTransacaoFixa));
+            await mediator.Send(new BuscarUltimaTransacaoPorIdFixaQuery(transacaoFixa.IdTransacaoFixa));
 
         var inicioInclusao = ultimaTransacao != null
             ? new DateTime(ultimaTransacao.Ano, ultimaTransacao.Mes, 1).AddMonths(1)
@@ -247,7 +288,7 @@ public class TransacaoFixaService(
     {
         var inicioExclusao = dataTerminoNovaNorm.AddMonths(1);
         var ultimaTransacao =
-            await mediator.Send(new ObterUltimaTransacaoPorIdFixaCommand(transacaoFixa.IdTransacaoFixa));
+            await mediator.Send(new BuscarUltimaTransacaoPorIdFixaQuery(transacaoFixa.IdTransacaoFixa));
 
         if (ultimaTransacao != null)
         {
@@ -289,15 +330,15 @@ public class TransacaoFixaService(
             );
 
             var dto = transacaoDto.Clone();
-            
+
             dto.Ano = iterator.Year;
             dto.Mes = iterator.Month;
             dto.Dia = transacaoFixa.DataInicio.Day;
 
             await mediator.Send(transacao != null
                 ? new AtualizarTransacaoAPartirDaFixaCommand(
-                    int.Parse(transacao.IdTransacao), 
-                    dto, 
+                    int.Parse(transacao.IdTransacao),
+                    dto,
                     transacaoFixa.Tags?.ToList() ?? []
                 )
                 : new CriarTransacaoAPartirDaFixaCommand(dto)
@@ -317,6 +358,26 @@ public class TransacaoFixaService(
 
             if (transacao != null)
                 await mediator.Send(new RemoverTransacaoCommand(int.Parse(transacao.IdTransacao)));
+        }
+    }
+
+    public async Task<bool> RemoverTransacaoFixaPorIdAsync(int id, bool transacoesAnteriores)
+    {
+        await transactionManager.BeginTransactionAsync();
+        try
+        {
+            if (transacoesAnteriores)
+                await mediator.Send(new RemoverTransacoesPorIdTransacaoFixaCommand(id));
+
+            var result = await transacaoFixaRepository.RemoverTransacaoFixaAsync(id);
+            await transactionManager.CommitAsync();
+
+            return result;
+        }
+        catch
+        {
+            await transactionManager.RollbackAsync();
+            throw;
         }
     }
 }

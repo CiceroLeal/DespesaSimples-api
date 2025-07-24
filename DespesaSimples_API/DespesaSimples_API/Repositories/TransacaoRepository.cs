@@ -115,4 +115,16 @@ public class TransacaoRepository : ITransacaoRepository
 
         return registrosAfetados > 0;
     }
+    
+    public async Task<bool> RemoverTransacoesPorIdTransacaoFixaAsync(int idTransacaoFixa)
+    {
+        var transacoes = _dsContext.Transacoes
+            .Where(t => t.IdTransacaoFixa == idTransacaoFixa);
+
+        _dsContext.Transacoes.RemoveRange(transacoes);
+
+        var registrosAfetados = await _dsContext.SaveChangesAsync();
+
+        return registrosAfetados > 0;
+    }
 }

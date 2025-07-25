@@ -18,9 +18,7 @@ public static class CategoriaController
         {
             var response = await categoriaService.BuscarCategoriasAsync();
 
-            return response.Categorias.Count == 0
-                ? ApiResultsUtil.NotFound("Nenhuma categoria encontrada")
-                : ApiResultsUtil.Success(response, "Categorias obtidas com sucesso");
+            return ApiResultsUtil.Success(response, "Categorias obtidas com sucesso");
         }
         catch (Exception ex)
         {
@@ -38,9 +36,7 @@ public static class CategoriaController
         {
             var response = await categoriaService.BuscarCategoriaDtoPorIdAsync(categoriaId);
             
-            return response.Categorias.Count == 0
-                ? ApiResultsUtil.NotFound("Nenhuma categoria encontrada")
-                : ApiResultsUtil.Success(response, "Categoria obtida com sucesso");
+            return ApiResultsUtil.Success(response, "Categoria obtida com sucesso");
         }
         catch (Exception ex)
         {

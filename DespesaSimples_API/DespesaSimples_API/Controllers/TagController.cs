@@ -18,9 +18,7 @@ public static class TagController
         {
             var response = await tagService.BuscarTodasTagsAsync();
             
-            return response.Tags.Count == 0
-                ? ApiResultsUtil.NotFound("Nenhuma tag encontrada")
-                : ApiResultsUtil.Success(response, "Tags obtidas com sucesso");
+            return ApiResultsUtil.Success(response, "Tags obtidas com sucesso");
         }
         catch (Exception ex)
         {
@@ -38,9 +36,7 @@ public static class TagController
         {
             var response = await tagService.BuscarTagPorIdAsync(tagId);
             
-            return response.Tags.Count == 0
-                ? ApiResultsUtil.NotFound("Nenhuma tag encontrada")
-                : ApiResultsUtil.Success(response, "Tag obtida com sucesso");
+            return ApiResultsUtil.Success(response, "Tag obtida com sucesso");
         }
         catch (Exception ex)
         {

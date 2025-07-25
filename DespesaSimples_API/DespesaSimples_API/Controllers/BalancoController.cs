@@ -20,9 +20,7 @@ public static class BalancoController
         {
             var response = await balancoService.BuscarPorAnoMesAsync(ano, mes);
             
-            return response.Balancos.Count == 0
-                ? ApiResultsUtil.NotFound("Nenhum balanço encontrado para o mês e ano especificados.") 
-                : ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
+            return ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
         }
         catch (Exception ex)
         {
@@ -40,9 +38,7 @@ public static class BalancoController
         {
             var response = await balancoService.BuscarPorAnoAsync(ano);
             
-            return response.Balancos.Count == 0
-                ? ApiResultsUtil.NotFound("Nenhum balanço encontrado para o mês e ano especificados.") 
-                : ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
+            return ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
         }
         catch (Exception ex)
         {

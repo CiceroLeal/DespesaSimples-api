@@ -22,9 +22,7 @@ public static class CartaoController
         {
             var response = await cartaoService.BuscarCartoesAsync(mes, ano);
             
-            return response.Cartoes.Count == 0
-                ? ApiResultsUtil.NotFound("Cartões não encontrados") 
-                : ApiResultsUtil.Success(response, "Cartões obtidos com sucesso");
+            return ApiResultsUtil.Success(response, "Cartões obtidos com sucesso");
         }
         catch (Exception ex)
         {
@@ -42,9 +40,7 @@ public static class CartaoController
         {
             var response = await cartaoService.BuscarCartaoPorIdAsync(cartaoId);
             
-            return response.Cartoes.Count == 0
-                ? ApiResultsUtil.NotFound("Cartão não encontrado") 
-                : ApiResultsUtil.Success(response, "Cartão obtido com sucesso");
+            return ApiResultsUtil.Success(response, "Cartão obtido com sucesso");
         }
         catch (Exception ex)
         {

@@ -28,11 +28,13 @@ public class TransacaoRepository : ITransacaoRepository
 
     public async Task<Transacao?> BuscarTransacaoPorIdFixaMesAnoAsync(int idTransacaoFixa, int mes, int ano)
     {
-        return await _dsContext.Transacoes
+        var result = await _dsContext.Transacoes
             .Where(t => t.IdTransacaoFixa == idTransacaoFixa)
             .Where(t => t.Mes == mes)
             .Where(t => t.Ano == ano)
             .FirstOrDefaultAsync();
+
+        return result;
     }
     
     public async Task<Transacao?> BuscarUltimaTransacaoPorIdFixaAsync(int id)

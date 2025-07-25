@@ -128,6 +128,7 @@ public class TransacaoFixaService(
             );
 
             var dataInicioAntiga = transacaoFixa.DataInicio;
+            var dataTerminoAntiga = transacaoFixa.DataTermino;
 
             var dataInicioAlterada = transacaoFixa.DataInicio.Day != dto.DataInicio.Day ||
                                      transacaoFixa.DataInicio.Month != dto.DataInicio.Month ||
@@ -154,7 +155,7 @@ public class TransacaoFixaService(
                 transacaoFixa,
                 transacaoDto,
                 dataInicioAntiga,
-                dto.DataTermino,
+                dataTerminoAntiga,
                 transacaoAnteriores,
                 dataInicioAlterada,
                 dataTerminoAlterada);
@@ -185,9 +186,13 @@ public class TransacaoFixaService(
         {
             var dataNovaInicio = new DateTime(transacaoFixa.DataInicio.Year, transacaoFixa.DataInicio.Month, 1);
             var dataAntigaInicio = new DateTime(dataAntiga.Year, dataAntiga.Month, 1);
+            var dataTermino = DataUtil.NormalizarParaInicioDoMes(transacaoFixa.DataTermino ?? DateTime.Now);
+            var dataFinal = dataTermino > DateTime.Now ? DataUtil.NormalizarParaInicioDoMes(DateTime.Now) : dataTermino;
 
             if (dataNovaInicio <= dataAntigaInicio)
-                await IncluirOuAtualizarTransacoesAsync(transacaoFixa, transacaoDto, dataNovaInicio);
+                await IncluirOuAtualizarTransacoesAsync(
+                    transacaoFixa, transacaoDto, dataNovaInicio, dataFinal
+                );
             else // dataNovaInicio > dataAntigaInicio
                 await ExcluirTransacoesAsync(transacaoFixa, dataAntigaInicio, dataNovaInicio);
 
@@ -211,10 +216,10 @@ public class TransacaoFixaService(
     }
 
     private async Task LidaComDataTerminoAsync(TransacaoFixa transacaoFixa, TransacaoDto transacaoFixaDto,
-        DateTime? dataTermino)
+        DateTime? dataTerminoAntiga)
     {
-        var dataAtualReferencia = ObterDataReferencia();
-        var dataTerminoAntiga = transacaoFixa.DataTermino;
+        var dataAtualReferencia = DataUtil.ObterDataReferencia();
+        var dataTermino = transacaoFixa.DataTermino;
 
         if (!dataTermino.HasValue)
         {
@@ -222,16 +227,16 @@ public class TransacaoFixaService(
             return;
         }
 
-        var dataTerminoNovaNorm = NormalizarParaInicioDoMes(dataTermino.Value);
+        var dataTerminoNovaNorm = DataUtil.NormalizarParaInicioDoMes(dataTermino.Value);
 
         if (!dataTerminoAntiga.HasValue)
         {
-            await TratarDataTerminoAnteriorIndefinidaAsync(transacaoFixa, transacaoFixaDto, dataTerminoNovaNorm,
+            await TratarDataTerminoAnteriorIndefinidaAsync(transacaoFixa, dataTerminoNovaNorm,
                 dataAtualReferencia);
             return;
         }
 
-        var dataTerminoAntigaNorm = NormalizarParaInicioDoMes(dataTerminoAntiga.Value);
+        var dataTerminoAntigaNorm = DataUtil.NormalizarParaInicioDoMes(dataTerminoAntiga.Value);
 
         if (dataTerminoNovaNorm < dataTerminoAntigaNorm)
         {
@@ -244,12 +249,6 @@ public class TransacaoFixaService(
         }
     }
 
-    private static DateTime ObterDataReferencia() =>
-        new(DateTime.Now.Year, DateTime.Now.Month, 1);
-
-    private static DateTime NormalizarParaInicioDoMes(DateTime data) =>
-        new(data.Year, data.Month, 1);
-
     // Se a nova DataTermino estiver vazia, inclui transações até o mês atual a partir da última transação cadastrada.
     private async Task TratarDataTerminoVaziaAsync(TransacaoFixa transacaoFixa, TransacaoDto transacaoDto,
         DateTime dataAtualReferencia)
@@ -258,29 +257,29 @@ public class TransacaoFixaService(
             await mediator.Send(new BuscarUltimaTransacaoPorIdFixaQuery(transacaoFixa.IdTransacaoFixa));
 
         var inicioInclusao = ultimaTransacao != null
-            ? new DateTime(ultimaTransacao.Ano, ultimaTransacao.Mes, 1).AddMonths(1)
-            : ObterDataReferencia();
+            ? new DateTime(ultimaTransacao.Ano, ultimaTransacao.Mes, 1)
+            : DataUtil.ObterDataReferencia();
 
         await IncluirOuAtualizarTransacoesAsync(
             transacaoFixa,
             transacaoDto,
             inicioInclusao,
-            dataAtualReferencia.AddMonths(1));
+            dataAtualReferencia);
     }
 
     // Se a DataTermino antiga era indefinida e agora foi definida, inclui transações começando da data atual.
-    private async Task TratarDataTerminoAnteriorIndefinidaAsync(TransacaoFixa transacaoFixa,
-        TransacaoDto transacaoDto, DateTime dataTerminoNovaNorm, DateTime dataAtualReferencia)
+    private async Task TratarDataTerminoAnteriorIndefinidaAsync(
+        TransacaoFixa transacaoFixa, 
+        DateTime dataTerminoNovaNorm, 
+        DateTime dataAtualReferencia)
     {
-        var fimInclusao = dataTerminoNovaNorm <= dataAtualReferencia
-            ? dataTerminoNovaNorm.AddMonths(1)
-            : dataAtualReferencia.AddMonths(1);
-
-        await IncluirOuAtualizarTransacoesAsync(
-            transacaoFixa,
-            transacaoDto,
-            ObterDataReferencia(),
-            fimInclusao);
+        if (dataTerminoNovaNorm < dataAtualReferencia)
+        {
+            await ExcluirTransacoesAsync(
+                transacaoFixa, 
+                dataTerminoNovaNorm.AddMonths(1), 
+                dataAtualReferencia.AddMonths(1));
+        }
     }
 
     // Se a nova DataTermino foi alterada para uma data anterior, exclui transações posteriores à nova data.
@@ -303,8 +302,8 @@ public class TransacaoFixaService(
     {
         var inicioInclusao = dataTerminoAntigaNorm.AddMonths(1);
         var fimInclusao = dataTerminoNovaNorm <= dataAtualReferencia
-            ? dataTerminoNovaNorm.AddMonths(1)
-            : dataAtualReferencia.AddMonths(1);
+            ? dataTerminoNovaNorm
+            : dataAtualReferencia;
 
         await IncluirOuAtualizarTransacoesAsync(
             transacaoFixa,

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using DespesaSimples_API.DbContexts.EntityConfiguration;
 using DespesaSimples_API.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,7 +17,6 @@ public class DespesaSimplesDbContext(DbContextOptions<DespesaSimplesDbContext> o
     public DbSet<TransacaoFixa> TransacoesFixas { get; set; }
     public DbSet<Balanco> Balancos { get; set; }
 
-    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new TransacaoConfiguration());

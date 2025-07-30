@@ -40,6 +40,15 @@ public class TransacaoFixaService(
             Transacoes = transacaoFixa != null ? [TransacaoFixaMapper.MapParaDto(transacaoFixa)] : []
         };
     }
+    
+    public async Task<List<TransacaoFixaDto>> BuscarTransacoesFixasPorMesAnoAsync(int mes, int ano,
+        TipoTransacaoEnum? tipo)
+    {
+        var transacoesFixas = await transacaoFixaRepository
+            .BuscarTransacoesFixasPorMesAnoIdAsync(mes, ano, tipo);
+
+        return transacoesFixas.Select(TransacaoFixaMapper.MapParaDto).ToList();
+    }
 
     public async Task<bool> CriarTransacaoFixaAsync(TransacaoFixaFormDto dto)
     {
@@ -52,11 +61,11 @@ public class TransacaoFixaService(
                 new BuscarAtualizarTagsCommand(dto.Tags ?? [])
             );
 
-            var transacaoFixa = TransacaoFixaMapper.MapTransacaoFixaFormDtoParaTransacaoFixa(dto, tags);
+            var transacaoFixa = TransacaoFixaMapper.MapFixaFormDtoParaFixa(dto, tags);
 
             await transacaoFixaRepository.CriarTransacaoFixaAsync(transacaoFixa);
 
-            var tDto = TransacaoFixaMapper.MapTransacaoFixaParaTransacaoDto(transacaoFixa, dto.Finalizada ?? false);
+            var tDto = TransacaoFixaMapper.MapFixaParaDto(transacaoFixa, dto.Finalizada ?? false);
 
             var result = await mediator.Send(new CriarTransacoesAPartirDaFixaCommand(tDto, dto.DataTermino, tags));
 
@@ -94,7 +103,7 @@ public class TransacaoFixaService(
                     continue;
 
                 var transacaoFixaDto =
-                    TransacaoFixaMapper.MapTransacaoFixaParaTransacaoDto(transacaoFixa);
+                    TransacaoFixaMapper.MapFixaParaDto(transacaoFixa);
 
                 if (!await mediator.Send(new CriarTransacaoAPartirDaFixaCommand(transacaoFixaDto)))
                     throw new Exception("Erro ao criar transação fixa para o mês e ano especificados.");
@@ -149,7 +158,7 @@ public class TransacaoFixaService(
             var result = await transacaoFixaRepository.AtualizarTransacaoFixaAsync(transacaoFixa);
 
             var transacaoDto =
-                TransacaoFixaMapper.MapTransacaoFixaParaTransacaoDto(transacaoFixa, dto.Finalizada ?? false);
+                TransacaoFixaMapper.MapFixaParaDto(transacaoFixa, dto.Finalizada ?? false);
 
             await LidaComTransacoesAnterioresAsync(
                 transacaoFixa,

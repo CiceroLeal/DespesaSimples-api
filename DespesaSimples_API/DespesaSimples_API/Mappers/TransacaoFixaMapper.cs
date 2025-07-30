@@ -30,7 +30,7 @@ public static class TransacaoFixaMapper
         };
     }
 
-    public static TransacaoFixa MapTransacaoFixaFormDtoParaTransacaoFixa(
+    public static TransacaoFixa MapFixaFormDtoParaFixa(
         TransacaoFixaFormDto transacaoFixaDto,
         List<Tag>? tags = null)
     {
@@ -50,7 +50,7 @@ public static class TransacaoFixaMapper
         };
     }
 
-    public static TransacaoDto MapTransacaoFixaParaTransacaoDto(
+    public static TransacaoDto MapFixaParaDto(
         TransacaoFixa transacaoFixa,
         bool finalizada = false)
     {
@@ -79,6 +79,46 @@ public static class TransacaoFixaMapper
                 ? CartaoMapper.MapCartaoParaDto(transacaoFixa.Cartao)
                 : null,
             Tags = transacaoFixa.Tags?.Select(t => t.Nome).ToList(),
+            Tipo = transacaoFixa.Tipo,
+            SubTransacoes = []
+        };
+    }
+    
+    public static List<TransacaoDto> MapFixasParaDto(List<TransacaoFixaDto> fixas, int mes, int ano)
+    {
+        return fixas
+            .Select(dto =>
+            {
+                dto.DataInicio = new DateTime(ano, mes, dto.DataInicio.Day);
+                return dto;
+            })
+            .Select(MapFixaDtoParaDto)
+            .ToList();
+    }
+    
+    public static TransacaoDto MapFixaDtoParaDto(TransacaoFixaDto transacaoFixa)
+    {
+        return new TransacaoDto
+        {
+            IdTransacao = $"{transacaoFixa.IdTransacaoFixa ?? 0}F",
+            Descricao = transacaoFixa.Descricao,
+            Valor = transacaoFixa.Valor,
+            Dia = transacaoFixa.DataInicio.Day,
+            Ano = transacaoFixa.DataInicio.Year,
+            Mes = transacaoFixa.DataInicio.Month,
+
+            Status = transacaoFixa.Finalizada == null ? nameof(StatusTransacaoEnum.AFinalizar) :
+                (bool)transacaoFixa.Finalizada ? nameof(StatusTransacaoEnum.Finalizada) :
+                StatusCalculadorUtil.CalculaStatus(
+                    transacaoFixa.DataInicio.Day,
+                    transacaoFixa.DataInicio.Month,
+                    transacaoFixa.DataInicio.Year),
+
+            IdCategoria = transacaoFixa.IdCategoria,
+            Categoria = transacaoFixa.Categoria,
+            IdCartao = transacaoFixa.IdCartao,
+            Cartao = transacaoFixa.Cartao,
+            Tags = transacaoFixa.Tags,
             Tipo = transacaoFixa.Tipo,
             SubTransacoes = []
         };

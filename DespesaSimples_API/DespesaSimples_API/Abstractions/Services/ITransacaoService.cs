@@ -7,6 +7,7 @@ namespace DespesaSimples_API.Abstractions.Services;
 
 public interface ITransacaoService
 {
+    Task<List<TransacaoDto>> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo, List<string> tags);
     Task<TransacaoDto?> BuscarTransacaoPorIdFixaMesAnoAsync(int idTransacaoFixa, int mes, int ano);
     Task<TransacaoDto?> BuscarUltimaTransacaoPorIdFixaAsync(int idTransacaoFixa);
     Task<decimal> SomarPorTipoAsync(TipoTransacaoEnum tipo, int ano, int mes);

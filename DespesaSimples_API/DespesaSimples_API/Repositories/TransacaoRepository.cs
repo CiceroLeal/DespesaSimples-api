@@ -17,7 +17,16 @@ public class TransacaoRepository : ITransacaoRepository
         _dsContext = context;
         _dsContext.CurrentUserId = usuarioService.GetIdUsuarioAtual();
     }
-
+    
+    public async Task<List<Transacao>> BuscarTransacoesPorMesAnoAsync(
+        int? ano = null,
+        int? mes = null,
+        TipoTransacaoEnum? tipo = null)
+    {
+        return await ConstroiMesAnoQuery(ano, mes, tipo)
+            .ToListAsync();
+    }
+    
     public async Task<Transacao?> BuscarTransacaoPorIdAsync(int id)
     {
         return await _dsContext.Transacoes
@@ -50,6 +59,28 @@ public class TransacaoRepository : ITransacaoRepository
     {
         return await _dsContext.Transacoes
             .Where(t => t.IdTransacaoFixa == idTransacaoFixa)
+            .Include(t => t.Tags)
+            .ToListAsync();
+    }
+    
+    public async Task<List<Transacao>> BuscarTransacoesDeletadasPorMesAnoAsync(
+        int ano,
+        int mes,
+        TipoTransacaoEnum? tipo = null)
+    {
+        var query = _dsContext.Transacoes
+            .IgnoreQueryFilters()
+            .Where(t => EF.Property<bool>(t, "IsDeleted") == true)
+            .Where(t => t.UsuarioId == _dsContext.CurrentUserId);
+
+        if (tipo.HasValue)
+            query = query.Where(t => t.Tipo == tipo.Value);
+
+        return await query
+            .Where(t => t.Ano == ano)
+            .Where(t => t.Mes == mes)
+            .Include(t => t.Categoria)
+            .Include(t => t.Cartao)
             .Include(t => t.Tags)
             .ToListAsync();
     }
@@ -128,5 +159,58 @@ public class TransacaoRepository : ITransacaoRepository
         var registrosAfetados = await _dsContext.SaveChangesAsync();
 
         return registrosAfetados > 0;
+    }
+    
+    private IQueryable<Transacao> ConstroiBaseQuery()
+    {
+        return _dsContext.Transacoes
+            .Include(t => t.Categoria)
+            .Include(t => t.Cartao)
+            .Include(t => t.Tags);
+    }
+    
+    private IQueryable<Transacao> ConstroiMesAnoQuery(
+        int? ano,
+        int? mes,
+        TipoTransacaoEnum? tipo)
+    {
+        var query = ConstroiBaseQuery();
+        query = AplicaTipoFilter(query, tipo);
+        query = AplicaPeriodoFilter(query, ano, mes);
+        return query;
+    }
+    
+    private static IQueryable<Transacao> AplicaTipoFilter(
+        IQueryable<Transacao> query,
+        TipoTransacaoEnum? tipo)
+    {
+        return tipo.HasValue
+            ? query.Where(t => t.Tipo == tipo.Value)
+            : query;
+    }
+    
+    private static IQueryable<Transacao> AplicaMesAnoFilter(
+        IQueryable<Transacao> query,
+        int? ano,
+        int mes)
+    {
+        var anoBase = ano ?? DateTime.Now.Year;
+
+        return query.Where(t =>
+            t.Mes == mes && t.Ano == anoBase
+        );
+    }
+
+    private static IQueryable<Transacao> AplicaPeriodoFilter(
+        IQueryable<Transacao> query,
+        int? ano,
+        int? mes)
+    {
+        if (mes.HasValue)
+            return AplicaMesAnoFilter(query, ano, mes.Value);
+
+        return ano.HasValue 
+            ? query.Where(t => t.Ano == ano.Value) 
+            : query;
     }
 }

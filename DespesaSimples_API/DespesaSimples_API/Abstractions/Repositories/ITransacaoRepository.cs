@@ -5,10 +5,12 @@ namespace DespesaSimples_API.Abstractions.Repositories;
 
 public interface ITransacaoRepository
 {
+    Task<List<Transacao>> BuscarTransacoesPorMesAnoAsync(int? ano, int? mes, TipoTransacaoEnum? tipo);
     Task<Transacao?> BuscarTransacaoPorIdAsync(int id);
     Task<Transacao?> BuscarTransacaoPorIdFixaMesAnoAsync(int idTransacaoFixa, int mes, int ano);
     Task<Transacao?> BuscarUltimaTransacaoPorIdFixaAsync(int id);
     Task<List<Transacao>> BuscarTransacaoPorIdFixaAsync(int idTransacaoFixa);
+    Task<List<Transacao>> BuscarTransacoesDeletadasPorMesAnoAsync(int ano, int mes, TipoTransacaoEnum? tipo = null);
     Task<decimal> SomarPorTipoAsync(TipoTransacaoEnum tipo, int ano, int mes);
     
     Task<bool> CriarTransacaoAsync(Transacao transacao);

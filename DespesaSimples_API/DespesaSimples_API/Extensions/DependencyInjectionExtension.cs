@@ -4,6 +4,7 @@ using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Infra;
 using DespesaSimples_API.Repositories;
 using DespesaSimples_API.Services;
+using DespesaSimples_API.Services.Builders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DespesaSimples_API.Extensions
@@ -33,6 +34,11 @@ namespace DespesaSimples_API.Extensions
             services.AddScoped<IUsuarioService, UsuarioService>();
 
             services.AddScoped<ITransactionManager, TransactionManager>();
+
+            // Builders
+            services.AddScoped<TransacaoFixaBuilder>();
+            services.AddScoped<TransacaoMerger>();
+
             return services;
         }
     }

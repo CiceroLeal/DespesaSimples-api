@@ -33,6 +33,24 @@ public static class EndpointRouteBuilderExtension
             .WithName("UpdateSenha");
     }
     
+    public static void RegisterTransacaoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    {
+        var transacoesEndpoints = endpointRouteBuilder.MapGroup("/transacoes")
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .RequireAuthorization();
+        
+        var transacoesFuturasEndpoints = endpointRouteBuilder
+            .MapGroup("/transacoes-futuras/{transacaoFuturaId}")
+            .RequireAuthorization();
+        
+        var transacoesComIdEndpoints = transacoesEndpoints.MapGroup("/{transacaoId:int}");
+
+        transacoesEndpoints.MapGet("", TransacaoController.GetTransacoesAsync)
+            .AddEndpointFilter<GetTransacoesValidationFilter>()
+            .WithName("GetTransacoes");
+        
+    }
+    
     public static void RegisterTransacaoFixaEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var transacaoFixaEndpoints = endpointRouteBuilder.MapGroup("/transacoes-fixas")

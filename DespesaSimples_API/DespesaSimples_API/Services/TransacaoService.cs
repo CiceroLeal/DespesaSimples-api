@@ -2,17 +2,35 @@ using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Commands;
 using DespesaSimples_API.Dtos.Transacao;
-using DespesaSimples_API.Dtos.TransacaoFixa;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Mappers;
+using DespesaSimples_API.Services.Builders;
 using DespesaSimples_API.Util;
 using MediatR;
 
 namespace DespesaSimples_API.Services;
 
-public class TransacaoService(ITransacaoRepository transacaoRepository, IMediator mediator) : ITransacaoService
+public class TransacaoService(
+    ITransacaoRepository transacaoRepository,
+    TransacaoFixaBuilder transacaoFixaBuilder,
+    IMediator mediator) : ITransacaoService
 {
+    public async Task<List<TransacaoDto>> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo,
+        List<string> tags)
+    {
+        var transacoesVariaveis = await transacaoRepository
+            .BuscarTransacoesPorMesAnoAsync(ano, mes, tipo);
+        
+        var transacoesFixas = await transacaoFixaBuilder.BuildAsync(transacoesVariaveis, ano, mes, tipo);
+        var todasTransacoes = transacoesVariaveis.Concat(transacoesFixas).ToList();
+        var todasDto = new TransacaoDtoBuilder(todasTransacoes).Build();
+
+        return tags.Count == 0 
+            ? todasDto 
+            : TransacaoUtil.FiltrarETotalizarPorTags(todasDto, tags);
+    }
+    
     public async Task<TransacaoDto?> BuscarTransacaoPorIdFixaMesAnoAsync(int idTransacaoFixa, int mes, int ano)
     {
         var transacao = await transacaoRepository.BuscarTransacaoPorIdFixaMesAnoAsync(idTransacaoFixa, mes, ano);

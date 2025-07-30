@@ -26,6 +26,24 @@ public static class CartaoMapper
                 null
         };
     }
+    
+    public static Cartao MapDtoParaCartao(CartaoDto cartaoDto)
+    {
+        return new Cartao
+        {
+            IdCartao = IdUtil.ParseIdToInt(cartaoDto.IdCartao, (char)TipoCategoriaEnum.Cartao),
+            Limite = cartaoDto.Limite,
+            Nome = cartaoDto.Nome,
+            Bandeira = cartaoDto.Bandeira,
+            Descricao = cartaoDto.Descricao,
+            DiaFechamento = cartaoDto.DiaFechamento,
+            DiaVencimento = cartaoDto.DiaVencimento,
+            TotalMes = cartaoDto.ValorParcial ?? 0,
+            IdCategoria = cartaoDto.IdCategoria != null 
+                ? IdUtil.ParseIdToInt(cartaoDto.IdCategoria, (char)TipoCategoriaEnum.Categoria)
+                : null
+        };
+    }
 
     public static Cartao MapCartaoCriacaoDtoParaCartao(CartaoFormDto cartaoCriacaoDto)
     {

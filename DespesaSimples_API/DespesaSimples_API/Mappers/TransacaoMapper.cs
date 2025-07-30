@@ -1,8 +1,6 @@
 ﻿using DespesaSimples_API.Dtos.Transacao;
-using DespesaSimples_API.Dtos.TransacaoFixa;
 using DespesaSimples_API.Entities;
-using DespesaSimples_API.Enums;
-using DespesaSimples_API.Util;
+using DespesaSimples_API.Mappers.Grouping;
 
 namespace DespesaSimples_API.Mappers;
 
@@ -33,6 +31,10 @@ public static class TransacaoMapper
 
     public static Transacao MapTransacaoDtoParaTransacao(TransacaoDto dto)
     {
+        var idTransacaoFixa = dto.IdTransacao.EndsWith('F') 
+            ? int.Parse(dto.IdTransacao[..^1]) 
+            : (int?)null;
+
         return new Transacao
         {
             Descricao = dto.Descricao ?? "",
@@ -44,7 +46,8 @@ public static class TransacaoMapper
             Tipo = dto.Tipo ?? 0,
             Status = dto.Status ?? string.Empty,
             IdCategoria = dto.IdCategoria,
-            IdCartao = dto.IdCartao
+            IdCartao = dto.IdCartao,
+            IdTransacaoFixa = idTransacaoFixa
         };
     }
 }

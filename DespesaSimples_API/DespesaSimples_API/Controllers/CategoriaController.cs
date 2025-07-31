@@ -16,7 +16,12 @@ public static class CategoriaController
     {
         try
         {
-            var response = await categoriaService.BuscarCategoriasAsync();
+            var categorias = await categoriaService.BuscarCategoriasAsync();
+
+            var response = new CategoriaResponseDto
+            {
+                Categorias = categorias
+            };
 
             return ApiResultsUtil.Success(response, "Categorias obtidas com sucesso");
         }
@@ -34,34 +39,19 @@ public static class CategoriaController
     {
         try
         {
-            var response = await categoriaService.BuscarCategoriaDtoPorIdAsync(categoriaId);
-            
+            var categoria = await categoriaService.BuscarCategoriaDtoPorIdAsync(categoriaId);
+
+            var response = new CategoriaResponseDto
+            {
+                Categorias = categoria != null ? [categoria] : []
+            };
+
             return ApiResultsUtil.Success(response, "Categoria obtida com sucesso");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Erro ao buscar categoria");
             return ApiResultsUtil.BadRequest("Erro ao buscar categoria");
-        }
-    }
-
-    public static async Task<IResult> DeleteCategoriaPorIdAsync(
-        ILogger<CategoriaDto> logger,
-        [FromServices] ICategoriaService categoriaService,
-        string categoriaId)
-    {
-        try
-        {
-            var result = await categoriaService.RemoverCategoriaPorIdAsync(categoriaId);
-
-            return result
-                ? ApiResultsUtil.Success("Categoria removida com sucesso")
-                : ApiResultsUtil.NotFound("Categoria não encontrada");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Erro ao remover categoria");
-            return ApiResultsUtil.BadRequest("Erro ao remover categoria");
         }
     }
 
@@ -107,6 +97,26 @@ public static class CategoriaController
         {
             logger.LogError(ex, "Erro ao atualizar categoria");
             return ApiResultsUtil.BadRequest("Erro ao atualizar categoria");
+        }
+    }
+
+    public static async Task<IResult> DeleteCategoriaPorIdAsync(
+        ILogger<CategoriaDto> logger,
+        [FromServices] ICategoriaService categoriaService,
+        string categoriaId)
+    {
+        try
+        {
+            var result = await categoriaService.RemoverCategoriaPorIdAsync(categoriaId);
+
+            return result
+                ? ApiResultsUtil.Success("Categoria removida com sucesso")
+                : ApiResultsUtil.NotFound("Categoria não encontrada");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Erro ao remover categoria");
+            return ApiResultsUtil.BadRequest("Erro ao remover categoria");
         }
     }
 }

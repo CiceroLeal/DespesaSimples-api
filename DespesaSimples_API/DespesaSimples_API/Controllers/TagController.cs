@@ -16,8 +16,13 @@ public static class TagController
     {
         try
         {
-            var response = await tagService.BuscarTodasTagsAsync();
-            
+            var tags = await tagService.BuscarTodasTagsAsync();
+
+            var response = new TagResponseDto
+            {
+                Tags = tags
+            };
+
             return ApiResultsUtil.Success(response, "Tags obtidas com sucesso");
         }
         catch (Exception ex)
@@ -34,8 +39,13 @@ public static class TagController
     {
         try
         {
-            var response = await tagService.BuscarTagPorIdAsync(tagId);
-            
+            var tag = await tagService.BuscarTagPorIdAsync(tagId);
+
+            var response = new TagResponseDto
+            {
+                Tags = tag != null ? [tag] : []
+            };
+
             return ApiResultsUtil.Success(response, "Tag obtida com sucesso");
         }
         catch (Exception ex)

@@ -32,25 +32,32 @@ public static class EndpointRouteBuilderExtension
             .RequireAuthorization()
             .WithName("UpdateSenha");
     }
-    
+
     public static void RegisterTransacaoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var transacoesEndpoints = endpointRouteBuilder.MapGroup("/transacoes")
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .RequireAuthorization();
-        
+
         var transacoesFuturasEndpoints = endpointRouteBuilder
             .MapGroup("/transacoes-futuras/{transacaoFuturaId}")
             .RequireAuthorization();
-        
+
         var transacoesComIdEndpoints = transacoesEndpoints.MapGroup("/{transacaoId:int}");
 
         transacoesEndpoints.MapGet("", TransacaoController.GetTransacoesAsync)
             .AddEndpointFilter<GetTransacoesValidationFilter>()
             .WithName("GetTransacoes");
-        
+
+        transacoesComIdEndpoints.MapGet("", TransacaoController.GetTransacaoPorIdAsync)
+            .WithName("GetTransacao");
+
+
+        //TRANSACOES FUTURAS
+        transacoesFuturasEndpoints.MapGet("", TransacaoController.GetTransacaoPorIdTransacaoFixaAsync)
+            .WithName("GetTransacaoPorIdTransacaoFixa");
     }
-    
+
     public static void RegisterTransacaoFixaEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var transacaoFixaEndpoints = endpointRouteBuilder.MapGroup("/transacoes-fixas")
@@ -73,19 +80,19 @@ public static class EndpointRouteBuilderExtension
         transacaoFixaComIdEndpoints.MapDelete("", TransacaoFixaController.DeleteTransacaoFixaPorIdAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .WithName("DeleteTransacaoFixa");
-        
+
         transacaoFixaComIdEndpoints.MapPut("", TransacaoFixaController.AtualizarTransacaoFixaAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .AddEndpointFilter<TransacaoFixaFormDtoValidationFilter>()
             .WithName("UpdateTransacaoFixa");
-        
+
         transacaoFixaEndpoints.MapPost("/criar-transacoes", TransacaoFixaController.CriarTransacoesParaMesAnoAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .AddEndpointFilter<MesAnoValidationFilter>()
             .AddEndpointFilter<TransacaoFixaFormDtoValidationFilter>()
             .WithName("CreateTransacoesParaMesAno");
     }
-    
+
     public static void RegisterCartaoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var cartaoEndpoints = endpointRouteBuilder.MapGroup("/cartoes")
@@ -114,7 +121,7 @@ public static class EndpointRouteBuilderExtension
             .AddEndpointFilter<CartaoDtoValidationFilter>()
             .WithName("UpdateCartoes");
     }
-    
+
     public static void RegisterCategoriaEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var categoriaEndpoints = endpointRouteBuilder.MapGroup("/categorias")
@@ -143,7 +150,7 @@ public static class EndpointRouteBuilderExtension
             .AddEndpointFilter<CategoriaDtoValidationFilter>()
             .WithName("UpdateCategoria");
     }
-    
+
     public static void RegisterTagEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var tagEndpoints = endpointRouteBuilder.MapGroup("/tags")
@@ -172,7 +179,7 @@ public static class EndpointRouteBuilderExtension
             .AddEndpointFilter<TagDtoValidationFilter>()
             .WithName("UpdateTag");
     }
-    
+
     public static void RegisterBalancoEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var balancoEndpoints = endpointRouteBuilder.MapGroup("/balanco")
@@ -181,7 +188,7 @@ public static class EndpointRouteBuilderExtension
         balancoEndpoints.MapGet("", BalancoController.GetBalancoMesAnoAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .WithName("GetBalanco");
-        
+
         balancoEndpoints.MapGet("/{ano:int}", BalancoController.GetBalancoAnoAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>()
             .WithName("GetBalancoAno");

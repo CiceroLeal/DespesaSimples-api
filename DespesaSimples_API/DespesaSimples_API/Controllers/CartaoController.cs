@@ -1,10 +1,8 @@
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Dtos;
 using DespesaSimples_API.Dtos.Cartao;
 using DespesaSimples_API.Exceptions;
 using DespesaSimples_API.Util;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -20,8 +18,13 @@ public static class CartaoController
     {
         try
         {
-            var response = await cartaoService.BuscarCartoesAsync(mes, ano);
-            
+            var cartoes = await cartaoService.BuscarCartoesAsync(mes, ano);
+
+            var response = new CartaoResponseDto
+            {
+                Cartoes = cartoes
+            };
+
             return ApiResultsUtil.Success(response, "Cartões obtidos com sucesso");
         }
         catch (Exception ex)
@@ -38,8 +41,13 @@ public static class CartaoController
     {
         try
         {
-            var response = await cartaoService.BuscarCartaoPorIdAsync(cartaoId);
-            
+            var cartao = await cartaoService.BuscarCartaoPorIdAsync(cartaoId);
+
+            var response = new CartaoResponseDto
+            {
+                Cartoes = cartao != null ? [cartao] : []
+            };
+
             return ApiResultsUtil.Success(response, "Cartão obtido com sucesso");
         }
         catch (Exception ex)

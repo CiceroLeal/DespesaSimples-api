@@ -5,11 +5,11 @@ namespace DespesaSimples_API.Abstractions.Services;
 
 public interface ITransacaoFixaService
 {
-    Task<TransacaoFixaResponseDto> BuscarTransacoesFixasAsync();
-    Task<TransacaoFixaResponseDto> BuscarTransacaoFixaPorIdAsync(int id);
+    Task<List<TransacaoFixaDto>> BuscarTransacoesFixasAsync();
+    Task<TransacaoFixaDto?> BuscarTransacaoFixaPorIdAsync(int id);
     Task<List<TransacaoFixaDto>> BuscarTransacoesFixasPorMesAnoAsync(int mes, int ano,
         TipoTransacaoEnum? tipo);
-    
+
     Task<bool> CriarTransacaoFixaAsync(TransacaoFixaFormDto dto);
     Task<bool> CriarTransacoesParaMesAnoAsync(int ano, int mes);
 
@@ -19,4 +19,4 @@ public interface ITransacaoFixaService
         bool transacaoAnteriores);
 
     Task<bool> RemoverTransacaoFixaPorIdAsync(int id, bool transacoesAnteriores);
-} 
+}

@@ -14,7 +14,7 @@ namespace DespesaSimples_API.Services;
 public class CartaoService(ICartaoRepository cartaoRepository, IMediator mediator)
     : ICartaoService
 {
-    public async Task<CartaoResponseDto> BuscarCartoesAsync(int? mes = null, int? ano = null)
+    public async Task<List<CartaoDto>> BuscarCartoesAsync(int? mes = null, int? ano = null)
     {
         List<Cartao> cartoes;
 
@@ -23,21 +23,15 @@ public class CartaoService(ICartaoRepository cartaoRepository, IMediator mediato
         else
             cartoes = await cartaoRepository.BuscarCartoesAsync();
 
-        return new CartaoResponseDto
-        {
-            Cartoes = cartoes.Select(CartaoMapper.MapCartaoParaDto).ToList()
-        };
+        return cartoes.Select(CartaoMapper.MapCartaoParaDto).ToList();
     }
 
-    public async Task<CartaoResponseDto> BuscarCartaoPorIdAsync(string id)
+    public async Task<CartaoDto?> BuscarCartaoPorIdAsync(string id)
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Cartao);
         var cartao = await cartaoRepository.BuscarCartaoPorIdAsync(idInt ?? 0);
 
-        return new CartaoResponseDto
-        {
-            Cartoes = cartao != null ? [CartaoMapper.MapCartaoParaDto(cartao)] : []
-        };
+        return cartao != null ? CartaoMapper.MapCartaoParaDto(cartao) : null;
     }
 
     public async Task<bool> RemoverCartaoPorIdAsync(string id)

@@ -13,31 +13,27 @@ namespace DespesaSimples_API.Services;
 public class CategoriaService(ICategoriaRepository categoriaRepository, IMediator mediator)
     : ICategoriaService
 {
-    public async Task<CategoriaResponseDto> BuscarCategoriasAsync()
+    public async Task<List<CategoriaDto>> BuscarCategoriasAsync()
     {
         var categorias = await categoriaRepository.BuscarCategoriasAsync();
 
-        return new CategoriaResponseDto
-        {
-            Categorias = categorias.Select(CategoriaMapper.MapCategoriaParaDto).ToList()
-        };
+        return categorias.Select(CategoriaMapper.MapCategoriaParaDto).ToList();
     }
 
-    public async Task<CategoriaResponseDto> BuscarCategoriaDtoPorIdAsync(string id)
+    public async Task<CategoriaDto?> BuscarCategoriaDtoPorIdAsync(string id)
     {
         var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria);
         var categoria = await categoriaRepository.BuscarCategoriaPorIdAsync(idInt ?? 0);
 
-        return new CategoriaResponseDto
-        {
-            Categorias = categoria != null ? [CategoriaMapper.MapCategoriaParaDto(categoria)] : []
-        };
+        return categoria != null ? CategoriaMapper.MapCategoriaParaDto(categoria) : null;
     }
 
-    public async Task<bool> RemoverCategoriaPorIdAsync(string id)
+    public async Task<List<CategoriaDto>> BuscarCategoriaEPaisPorIdAsync(string id)
     {
-        var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria) ?? 0;
-        return await categoriaRepository.RemoverCategoriaAsync(idInt);
+        var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria);
+        var categorias = await categoriaRepository.BuscarCategoriaEPaisAsync(idInt ?? 0);
+
+        return categorias.Select(CategoriaMapper.MapCategoriaParaDto).ToList();
     }
 
     public async Task<bool> CriarCategoriaAsync(CategoriaFormDto categoriaFormDto)
@@ -83,14 +79,9 @@ public class CategoriaService(ICategoriaRepository categoriaRepository, IMediato
         return result;
     }
 
-    public async Task<CategoriaResponseDto> BuscarCategoriaEPaisPorIdAsync(string id)
+    public async Task<bool> RemoverCategoriaPorIdAsync(string id)
     {
-        var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria);
-        var categorias = await categoriaRepository.BuscarCategoriaEPaisAsync(idInt ?? 0);
-
-        return new CategoriaResponseDto
-        {
-            Categorias = categorias.Select(CategoriaMapper.MapCategoriaParaDto).ToList()
-        };
+        var idInt = IdUtil.ParseIdToInt(id, (char)TipoCategoriaEnum.Categoria) ?? 0;
+        return await categoriaRepository.RemoverCategoriaAsync(idInt);
     }
 }

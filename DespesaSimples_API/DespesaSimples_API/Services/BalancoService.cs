@@ -11,34 +11,24 @@ namespace DespesaSimples_API.Services;
 public class BalancoService(IBalancoRepository balancoRepository, IMediator mediator)
     : IBalancoService
 {
-    public async Task<BalancoResponseDto> BuscarPorAnoMesAsync(int ano, int mes)
+    public async Task<BalancoDto?> BuscarPorAnoMesAsync(int ano, int mes)
     {
-        var dto = BalancoMapper
+        return BalancoMapper
             .MapParaDto(await balancoRepository.BuscarPorAnoMesAsync(ano, mes) ?? null);
-
-        return new BalancoResponseDto
-        {
-            Balancos = dto != null ? [dto] : []
-        };
     }
 
-    public async Task<BalancoResponseDto> BuscarPorAnoAsync(int ano)
+    public async Task<List<BalancoDto>> BuscarPorAnoAsync(int ano)
     {
         var balancos = await balancoRepository.BuscarPorAnoAsync(ano);
 
         if (balancos.Count == 0)
-            return new BalancoResponseDto();
+            return [];
 
-        var dtos = balancos
+        return balancos
             .Select(BalancoMapper.MapParaDto)
             .Where(b => b != null)
             .OfType<BalancoDto>()
             .ToList();
-
-        return new BalancoResponseDto
-        {
-            Balancos = dtos
-        };
     }
 
     private async Task<BalancoDto> GerarBalancoAsync(int ano, int mes)

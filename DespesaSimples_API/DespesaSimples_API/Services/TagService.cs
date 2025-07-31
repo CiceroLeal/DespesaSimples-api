@@ -1,6 +1,5 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Dtos;
 using DespesaSimples_API.Dtos.Tag;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Exceptions;
@@ -10,25 +9,17 @@ namespace DespesaSimples_API.Services;
 
 public class TagService(ITagRepository tagRepository) : ITagService
 {
-    public async Task<TagResponseDto> BuscarTodasTagsAsync()
+    public async Task<List<TagDto>> BuscarTodasTagsAsync()
     {
         var tags = await tagRepository.BuscarTodasTagsAsync();
-        var tagsDtos = tags.Select(TagMapper.MapParaDto).ToList();
-
-        return new TagResponseDto
-        {
-            Tags = tagsDtos
-        };
+        return tags.Select(TagMapper.MapParaDto).ToList();
     }
 
-    public async Task<TagResponseDto> BuscarTagPorIdAsync(int id)
+    public async Task<TagDto?> BuscarTagPorIdAsync(int id)
     {
         var tag = await tagRepository.BuscarTagPorIdAsync(id);
 
-        return new TagResponseDto
-        {
-            Tags = tag != null ? [TagMapper.MapParaDto(tag)] : []
-        };
+        return tag != null ? TagMapper.MapParaDto(tag) : null;
     }
 
     public async Task<bool> RemoverTagPorIdAsync(int id)
@@ -54,7 +45,7 @@ public class TagService(ITagRepository tagRepository) : ITagService
 
         return await tagRepository.AtualizarTagAsync(tag);
     }
-    
+
     public async Task<List<Tag>> BuscarAtualizarTagsAsync(List<string> nomesTags)
     {
         var tags = new List<Tag>();
@@ -66,6 +57,7 @@ public class TagService(ITagRepository tagRepository) : ITagService
                 tag = new Tag { Nome = nomeTag };
                 await tagRepository.CriarTagAsync(tag);
             }
+
             tags.Add(tag);
         }
 

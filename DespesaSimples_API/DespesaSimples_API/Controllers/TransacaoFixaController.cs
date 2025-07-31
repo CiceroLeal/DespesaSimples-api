@@ -16,7 +16,12 @@ public static class TransacaoFixaController
     {
         try
         {
-            var response = await transacaoFixaService.BuscarTransacoesFixasAsync();
+            var transacoesFixas = await transacaoFixaService.BuscarTransacoesFixasAsync();
+
+            var response = new TransacaoFixaResponseDto
+            {
+                Transacoes = transacoesFixas
+            };
 
             return ApiResultsUtil.Success(response, "Transações fixas obtidas com sucesso");
         }
@@ -34,7 +39,12 @@ public static class TransacaoFixaController
     {
         try
         {
-            var response = await transacaoFixaService.BuscarTransacaoFixaPorIdAsync(transacaoFixaId);
+            var transacaoFixa = await transacaoFixaService.BuscarTransacaoFixaPorIdAsync(transacaoFixaId);
+
+            var response = new TransacaoFixaResponseDto
+            {
+                Transacoes = transacaoFixa != null ? [transacaoFixa] : []
+            };
 
             return ApiResultsUtil.Success(response, "Transação fixa obtida com sucesso");
         }
@@ -64,7 +74,7 @@ public static class TransacaoFixaController
             return ApiResultsUtil.BadRequest("Erro ao criar transação fixa");
         }
     }
-    
+
     public static async Task<IResult> CriarTransacoesParaMesAnoAsync(
         ILogger<TransacaoFixaDto> logger,
         [FromServices] ITransacaoFixaService transacaoFixaService,
@@ -112,7 +122,7 @@ public static class TransacaoFixaController
             return ApiResultsUtil.BadRequest("Erro ao atualizar transação fixa");
         }
     }
-    
+
     public static async Task<IResult> DeleteTransacaoFixaPorIdAsync(
         ILogger<TransacaoFixaDto> logger,
         [FromServices] ITransacaoFixaService transacaoFixaService,

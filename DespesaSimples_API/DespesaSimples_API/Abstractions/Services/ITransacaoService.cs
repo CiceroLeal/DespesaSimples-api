@@ -6,9 +6,11 @@ namespace DespesaSimples_API.Abstractions.Services;
 
 public interface ITransacaoService
 {
-    Task<TransacaoResponseDto> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo, List<string> tags);
+    Task<List<TransacaoDto>> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo, List<string> tags);
+    Task<TransacaoDto?> BuscarTransacaoPorIdAsync(int id);
     Task<TransacaoDto?> BuscarTransacaoPorIdFixaMesAnoAsync(int idTransacaoFixa, int mes, int ano);
     Task<TransacaoDto?> BuscarUltimaTransacaoPorIdFixaAsync(int idTransacaoFixa);
+    Task<TransacaoDto?> BuscarTransacaoPorIdTransacaoFixaAsync(string id, int mes, int ano);
     Task<decimal> SomarPorTipoAsync(TipoTransacaoEnum tipo, int ano, int mes);
 
     Task<bool> CriarTransacaoAPartirDaFixaAsync(TransacaoDto dto);

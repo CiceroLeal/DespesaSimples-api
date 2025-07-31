@@ -6,11 +6,11 @@ public static class IdUtil
     {
         if (string.IsNullOrEmpty(id) || id.Equals("0"))
             return null;
-        
+
         return int.Parse(
-            id.EndsWith(sufix) ? 
-                id[..^1] : 
-                id
+            id.EndsWith(sufix)
+                ? id[..^1]
+                : id
         );
     }
 }

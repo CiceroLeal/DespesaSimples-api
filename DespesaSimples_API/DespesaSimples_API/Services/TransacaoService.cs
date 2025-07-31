@@ -5,6 +5,7 @@ using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
 using DespesaSimples_API.Mappers;
+using DespesaSimples_API.Queries;
 using DespesaSimples_API.Services.Builders;
 using DespesaSimples_API.Util;
 using MediatR;
@@ -16,7 +17,7 @@ public class TransacaoService(
     TransacaoFixaBuilder transacaoFixaBuilder,
     IMediator mediator) : ITransacaoService
 {
-    public async Task<TransacaoResponseDto> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo,
+    public async Task<List<TransacaoDto>> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo,
         List<string> tags)
     {
         var transacoesVariaveis = await transacaoRepository
@@ -26,12 +27,33 @@ public class TransacaoService(
         var todasTransacoes = transacoesVariaveis.Concat(transacoesFixas).ToList();
         var todasDto = new TransacaoDtoBuilder(todasTransacoes).Build();
 
-        return new TransacaoResponseDto
-        {
-            Transacoes = tags.Count == 0
-                ? todasDto
-                : TransacaoUtil.FiltrarETotalizarPorTags(todasDto, tags)
-        };
+        return tags.Count == 0
+            ? todasDto
+            : TransacaoUtil.FiltrarETotalizarPorTags(todasDto, tags);
+    }
+
+    public async Task<TransacaoDto?> BuscarTransacaoPorIdAsync(int id)
+    {
+        var transacao = await transacaoRepository.BuscarTransacaoPorIdAsync(id);
+
+        return transacao != null ? TransacaoMapper.MapParaDto(transacao) : null;
+    }
+
+    public async Task<TransacaoDto?> BuscarTransacaoPorIdTransacaoFixaAsync(string id, int mes, int ano)
+    {
+        var transacaoId = IdUtil.ParseIdToInt(id, 'F');
+
+        if (transacaoId == null)
+            return null;
+
+        var transacaoFixa = await mediator.Send(new BuscarTransacaoFixaPorIdQuery((int)transacaoId));
+
+        if (transacaoFixa == null)
+            return null;
+
+        transacaoFixa.DataInicio = new DateTime(ano, mes, transacaoFixa.DataInicio.Day);
+
+        return TransacaoFixaMapper.MapFixaDtoParaDto(transacaoFixa);
     }
 
     public async Task<TransacaoDto?> BuscarTransacaoPorIdFixaMesAnoAsync(int idTransacaoFixa, int mes, int ano)

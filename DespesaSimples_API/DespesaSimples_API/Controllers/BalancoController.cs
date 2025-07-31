@@ -1,5 +1,4 @@
 using DespesaSimples_API.Abstractions.Services;
-using DespesaSimples_API.Dtos;
 using DespesaSimples_API.Dtos.Balanco;
 using DespesaSimples_API.Util;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +17,13 @@ public static class BalancoController
     {
         try
         {
-            var response = await balancoService.BuscarPorAnoMesAsync(ano, mes);
-            
+            var balanco = await balancoService.BuscarPorAnoMesAsync(ano, mes);
+
+            var response = new BalancoResponseDto
+            {
+                Balancos = balanco != null ? [balanco] : []
+            };
+
             return ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
         }
         catch (Exception ex)
@@ -36,8 +40,13 @@ public static class BalancoController
     {
         try
         {
-            var response = await balancoService.BuscarPorAnoAsync(ano);
-            
+            var balancos = await balancoService.BuscarPorAnoAsync(ano);
+
+            var response = new BalancoResponseDto
+            {
+                Balancos = balancos
+            };
+
             return ApiResultsUtil.Success(response, "Balanços obtidos com sucesso");
         }
         catch (Exception ex)

@@ -21,26 +21,20 @@ public class TransacaoFixaService(
 )
     : ITransacaoFixaService
 {
-    public async Task<TransacaoFixaResponseDto> BuscarTransacoesFixasAsync()
+    public async Task<List<TransacaoFixaDto>> BuscarTransacoesFixasAsync()
     {
         var transacoesFixas = await transacaoFixaRepository.BuscarTodasTransacoesFixasAsync();
 
-        return new TransacaoFixaResponseDto
-        {
-            Transacoes = transacoesFixas.Select(TransacaoFixaMapper.MapParaDto).ToList()
-        };
+        return transacoesFixas.Select(TransacaoFixaMapper.MapParaDto).ToList();
     }
 
-    public async Task<TransacaoFixaResponseDto> BuscarTransacaoFixaPorIdAsync(int id)
+    public async Task<TransacaoFixaDto?> BuscarTransacaoFixaPorIdAsync(int id)
     {
         var transacaoFixa = await transacaoFixaRepository.BuscarTransacaoFixaPorIdAsync(id);
 
-        return new TransacaoFixaResponseDto
-        {
-            Transacoes = transacaoFixa != null ? [TransacaoFixaMapper.MapParaDto(transacaoFixa)] : []
-        };
+        return transacaoFixa != null ? TransacaoFixaMapper.MapParaDto(transacaoFixa) : null;
     }
-    
+
     public async Task<List<TransacaoFixaDto>> BuscarTransacoesFixasPorMesAnoAsync(int mes, int ano,
         TipoTransacaoEnum? tipo)
     {
@@ -278,15 +272,15 @@ public class TransacaoFixaService(
 
     // Se a DataTermino antiga era indefinida e agora foi definida, inclui transações começando da data atual.
     private async Task TratarDataTerminoAnteriorIndefinidaAsync(
-        TransacaoFixa transacaoFixa, 
-        DateTime dataTerminoNovaNorm, 
+        TransacaoFixa transacaoFixa,
+        DateTime dataTerminoNovaNorm,
         DateTime dataAtualReferencia)
     {
         if (dataTerminoNovaNorm < dataAtualReferencia)
         {
             await ExcluirTransacoesAsync(
-                transacaoFixa, 
-                dataTerminoNovaNorm.AddMonths(1), 
+                transacaoFixa,
+                dataTerminoNovaNorm.AddMonths(1),
                 dataAtualReferencia.AddMonths(1));
         }
     }

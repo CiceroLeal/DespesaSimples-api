@@ -16,21 +16,24 @@ public class TransacaoService(
     TransacaoFixaBuilder transacaoFixaBuilder,
     IMediator mediator) : ITransacaoService
 {
-    public async Task<List<TransacaoDto>> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo,
+    public async Task<TransacaoResponseDto> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo,
         List<string> tags)
     {
         var transacoesVariaveis = await transacaoRepository
             .BuscarTransacoesPorMesAnoAsync(ano, mes, tipo);
-        
+
         var transacoesFixas = await transacaoFixaBuilder.BuildAsync(transacoesVariaveis, ano, mes, tipo);
         var todasTransacoes = transacoesVariaveis.Concat(transacoesFixas).ToList();
         var todasDto = new TransacaoDtoBuilder(todasTransacoes).Build();
 
-        return tags.Count == 0 
-            ? todasDto 
-            : TransacaoUtil.FiltrarETotalizarPorTags(todasDto, tags);
+        return new TransacaoResponseDto
+        {
+            Transacoes = tags.Count == 0
+                ? todasDto
+                : TransacaoUtil.FiltrarETotalizarPorTags(todasDto, tags)
+        };
     }
-    
+
     public async Task<TransacaoDto?> BuscarTransacaoPorIdFixaMesAnoAsync(int idTransacaoFixa, int mes, int ano)
     {
         var transacao = await transacaoRepository.BuscarTransacaoPorIdFixaMesAnoAsync(idTransacaoFixa, mes, ano);
@@ -75,11 +78,11 @@ public class TransacaoService(
                (dataAtualizacao.Year == dataFim.Year && dataAtualizacao.Month <= dataFim.Month))
         {
             var transacao = TransacaoMapper.MapTransacaoDtoParaTransacao(dto);
-            
+
             transacao.IdTransacaoFixa = int.Parse(
                 dto.IdTransacao.EndsWith('F') ? dto.IdTransacao[..^1] : dto.IdTransacao
             );
-            
+
             transacao.Dia = dataAtualizacao.Day;
             transacao.Mes = dataAtualizacao.Month;
             transacao.Ano = dataAtualizacao.Year;
@@ -149,7 +152,7 @@ public class TransacaoService(
                 transacao.IdCartao = dto.IdCartao;
                 transacao.Tags?.Clear();
                 transacao.Tags = tags;
-                
+
                 await transacaoRepository.AtualizarTransacaoAsync(transacao);
             }
 
@@ -165,9 +168,9 @@ public class TransacaoService(
     {
         return await transacaoRepository.RemoverTransacaoAsync(id);
     }
-    
+
     public async Task<bool> RemoverTransacoesPorIdTransacaoFixaAsync(int idTransacaoFixa)
     {
-       return await transacaoRepository.RemoverTransacoesPorIdTransacaoFixaAsync(idTransacaoFixa);
+        return await transacaoRepository.RemoverTransacoesPorIdTransacaoFixaAsync(idTransacaoFixa);
     }
 }

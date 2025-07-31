@@ -1,3 +1,4 @@
+using DespesaSimples_API.Util;
 using Microsoft.AspNetCore.Http;
 
 namespace DespesaSimples_API.Filters;
@@ -7,27 +8,40 @@ public class MesAnoValidationFilter : IEndpointFilter
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var errors = new Dictionary<string, string[]>();
-        
-        int? mes = null;
-        int? ano = null;
+        var request = context.HttpContext.Request;
 
-        foreach (var arg in context.Arguments)
+        var anoStr = request.RouteValues["ano"]?.ToString() ?? request.Query["ano"].FirstOrDefault();
+        var mesStr = request.RouteValues["mes"]?.ToString() ?? request.Query["mes"].FirstOrDefault();
+
+
+        if (anoStr != null)
         {
-            if (arg is not int i) 
-                continue;
-            
-            if (ano == null) ano = i;
-            else if (mes == null) mes = i;
+            if (int.TryParse(anoStr, out var ano))
+            {
+                if (ano < 1900)
+                    errors["ano"] = ["Ano deve ser maior que 1900."];
+            }
+            else
+            {
+                errors["ano"] = ["Ano deve ser um número inteiro válido."];
+            }
         }
-        
-        if (mes is < 1 or > 12)
-            errors[nameof(mes)] = ["Mês deve estar entre 1 e 12."];
-        
-        if(ano is < 1900)
-            errors[nameof(ano)] = ["Ano deve ser maior que 1900."];
 
-        if (errors.Count != 0)
-            return Util.ApiResultsUtil.BadRequest(errors);
+        if (mesStr != null)
+        {
+            if (int.TryParse(mesStr, out var mes))
+            {
+                if (mes is < 1 or > 12)
+                    errors["mes"] = ["Mês deve estar entre 1 e 12."];
+            }
+            else
+            {
+                errors["mes"] = ["Mês deve ser um número inteiro válido."];
+            }
+        }
+
+        if (errors.Count > 0)
+            return ApiResultsUtil.BadRequest(errors);
 
         return await next(context);
     }

@@ -22,12 +22,12 @@ public static class TransacaoController
         {
             var response = await transacaoService.BuscarTransacoesAsync(ano, mes, tipo, tags.ToList());
 
-            return ApiResultsUtil.Success(response, "Transações fixas obtidas com sucesso");
+            return ApiResultsUtil.Success(response, "Transações obtidas com sucesso");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao buscar transações fixas");
-            return ApiResultsUtil.BadRequest("Erro ao buscar transações fixas");
+            logger.LogError(ex, "Erro ao buscar transações");
+            return ApiResultsUtil.BadRequest("Erro ao buscar transações");
         }
     }
 }

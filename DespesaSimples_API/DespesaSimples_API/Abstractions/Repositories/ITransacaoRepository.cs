@@ -14,6 +14,7 @@ public interface ITransacaoRepository
     Task<decimal> SomarPorTipoAsync(TipoTransacaoEnum tipo, int ano, int mes);
     
     Task<bool> CriarTransacaoAsync(Transacao transacao);
+    Task<List<Transacao>> CriarTransacaoAsync(List<Transacao> transacoes);
     
     Task<bool> AtualizarTransacaoAsync(Transacao transacao);
     Task<bool> AtualizarDiaTransacoesFuturasPorCategoriaAsync(int idCategoria, int novoDia, int anoAtual, int mesAtual);

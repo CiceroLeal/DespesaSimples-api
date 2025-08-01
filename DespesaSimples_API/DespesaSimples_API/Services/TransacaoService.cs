@@ -1,9 +1,13 @@
+using DespesaSimples_API.Abstractions.Infra;
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
+using DespesaSimples_API.Abstractions.Services.Factories;
 using DespesaSimples_API.Commands;
+using DespesaSimples_API.Commands.TransacaoFixa;
 using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
+using DespesaSimples_API.Exceptions;
 using DespesaSimples_API.Mappers;
 using DespesaSimples_API.Queries;
 using DespesaSimples_API.Services.Builders;
@@ -15,6 +19,8 @@ namespace DespesaSimples_API.Services;
 public class TransacaoService(
     ITransacaoRepository transacaoRepository,
     TransacaoFixaBuilder transacaoFixaBuilder,
+    ITransacaoFactory transacaoFactory,
+    ITransactionManager transactionManager,
     IMediator mediator) : ITransacaoService
 {
     public async Task<List<TransacaoDto>> BuscarTransacoesAsync(int? ano, int? mes, TipoTransacaoEnum? tipo,
@@ -75,6 +81,50 @@ public class TransacaoService(
                 tipo,
                 ano,
                 mes);
+    }
+    
+    public async Task<bool> CriarTransacaoAsync(TransacaoCriacaoDto transacaoCriacaoDto)
+    {
+        if (transacaoCriacaoDto == null)
+            throw new NotFoundException();
+
+        await transactionManager.BeginTransactionAsync();
+        try
+        {
+            var tags = await mediator.Send(new BuscarAtualizarTagsCommand(transacaoCriacaoDto.Tags ?? []));
+            
+            if (transacaoCriacaoDto.Fixa)
+                await CriarTransacaoFixaAsync(transacaoCriacaoDto, tags);
+            else
+            {
+                var transacoesParaSalvar = transacaoFactory.Create(transacaoCriacaoDto, tags);
+                await transacaoRepository.CriarTransacaoAsync(transacoesParaSalvar);
+            }
+            
+            await mediator.Send(
+                new ReprocessarBalancosCommand(transacaoCriacaoDto.DataVencimento)
+            );
+
+            await transactionManager.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await transactionManager.RollbackAsync();
+            throw;
+        }
+    }
+    
+    private async Task CriarTransacaoFixaAsync(TransacaoCriacaoDto dto, List<Tag> tags)
+    {
+        var transacaoFixaDto = await mediator.Send(new CriarTransacaoFixaAPartirDoCriacaoDtoCommand(dto, tags));
+
+        if (transacaoFixaDto == null)
+            throw new ApplicationException("Erro ao criar transação fixa");
+
+        var transacaoDto = TransacaoFixaMapper.MapFixaDtoParaDto(transacaoFixaDto);
+        
+        await CriarTransacoesAPartirDaFixaAsync(transacaoDto, dto.DataTransacao, tags);
     }
 
     public async Task<bool> CriarTransacaoAPartirDaFixaAsync(TransacaoDto dto)

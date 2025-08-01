@@ -1,6 +1,7 @@
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Commands;
+using DespesaSimples_API.Commands.Transacao;
 using DespesaSimples_API.Dtos.Cartao;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;

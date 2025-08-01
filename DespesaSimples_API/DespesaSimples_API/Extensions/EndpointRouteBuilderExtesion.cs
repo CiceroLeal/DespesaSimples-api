@@ -51,6 +51,9 @@ public static class EndpointRouteBuilderExtension
 
         transacoesComIdEndpoints.MapGet("", TransacaoController.GetTransacaoPorIdAsync)
             .WithName("GetTransacao");
+        
+        transacoesEndpoints.MapPost("", TransacaoController.CriarTransacaoAsync)
+            .WithName("CreateTransacao");
 
 
         //TRANSACOES FUTURAS

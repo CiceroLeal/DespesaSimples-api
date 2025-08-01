@@ -99,6 +99,14 @@ public class TransacaoRepository : ITransacaoRepository
         await _dsContext.SaveChangesAsync();
         return true;
     }
+    
+    public async Task<List<Transacao>> CriarTransacaoAsync(List<Transacao> transacoes)
+    {
+        transacoes.ForEach(t => t.UsuarioId = _dsContext.CurrentUserId ?? "");
+        await _dsContext.Transacoes.AddRangeAsync(transacoes);
+        await _dsContext.SaveChangesAsync();
+        return transacoes;
+    }
 
     public async Task<bool> AtualizarTransacaoAsync(Transacao transacao)
     {

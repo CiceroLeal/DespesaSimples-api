@@ -2,6 +2,7 @@ using DespesaSimples_API.Abstractions.Infra;
 using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Commands;
+using DespesaSimples_API.Commands.Transacao;
 using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Dtos.TransacaoFixa;
 using DespesaSimples_API.Entities;
@@ -111,6 +112,19 @@ public class TransacaoFixaService(
             await transactionManager.RollbackAsync();
             throw;
         }
+    }
+
+    public async Task<TransacaoFixaDto?> CriarTransacaoFixaAPartirDoCriacaoDtoAsync(TransacaoCriacaoDto? transacaoDto, List<Tag> tags)
+    {
+        if (transacaoDto == null)
+            return null;
+
+        var transacaoFixa = TransacaoFixaMapper.MapTransacaoCriacaoDtoParaTransacaoFixa(transacaoDto);
+        transacaoFixa.Tags = tags;
+
+        await transacaoFixaRepository.CriarTransacaoFixaAsync(transacaoFixa);
+
+        return TransacaoFixaMapper.MapParaDto(transacaoFixa);
     }
 
     public async Task<bool> AtualizarTransacaoFixaAsync(

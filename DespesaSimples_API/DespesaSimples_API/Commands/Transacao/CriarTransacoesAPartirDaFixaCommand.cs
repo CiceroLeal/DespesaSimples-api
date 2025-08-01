@@ -3,7 +3,7 @@ using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Entities;
 using MediatR;
 
-namespace DespesaSimples_API.Commands;
+namespace DespesaSimples_API.Commands.Transacao;
 
 public record CriarTransacoesAPartirDaFixaCommand(
     TransacaoDto TransacaoFixaDto,

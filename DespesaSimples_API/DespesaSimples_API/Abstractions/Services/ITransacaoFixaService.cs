@@ -1,4 +1,6 @@
+using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Dtos.TransacaoFixa;
+using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
 
 namespace DespesaSimples_API.Abstractions.Services;
@@ -12,6 +14,7 @@ public interface ITransacaoFixaService
 
     Task<bool> CriarTransacaoFixaAsync(TransacaoFixaFormDto dto);
     Task<bool> CriarTransacoesParaMesAnoAsync(int ano, int mes);
+    Task<TransacaoFixaDto?> CriarTransacaoFixaAPartirDoCriacaoDtoAsync(TransacaoCriacaoDto? transacaoDto, List<Tag> tags);
 
     Task<bool> AtualizarTransacaoFixaAsync(
         int id,

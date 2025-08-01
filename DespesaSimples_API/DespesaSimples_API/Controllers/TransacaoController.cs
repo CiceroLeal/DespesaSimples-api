@@ -83,4 +83,24 @@ public static class TransacaoController
             return ApiResultsUtil.BadRequest("Erro ao buscar transação");
         }
     }
+    
+    public static async Task<IResult> CriarTransacaoAsync(
+        ILogger<TransacaoDto> logger,
+        ITransacaoService transacaoService,
+        TransacaoCriacaoDto transacaoCriacaoDto)
+    {
+        try
+        {
+            var result = await transacaoService.CriarTransacaoAsync(transacaoCriacaoDto);
+
+            return result
+                ? ApiResultsUtil.Success("Transação criada com sucesso")
+                : ApiResultsUtil.BadRequest("Erro ao criar transação");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Erro ao criar transação");
+            return ApiResultsUtil.BadRequest("Erro ao criar transação");
+        }
+    }
 }

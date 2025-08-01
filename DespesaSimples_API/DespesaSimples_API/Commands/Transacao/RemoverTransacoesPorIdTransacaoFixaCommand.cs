@@ -1,7 +1,7 @@
 using DespesaSimples_API.Abstractions.Services;
 using MediatR;
 
-namespace DespesaSimples_API.Commands;
+namespace DespesaSimples_API.Commands.Transacao;
 
 public record RemoverTransacoesPorIdTransacaoFixaCommand(int Id) :  IRequest<bool>;
 

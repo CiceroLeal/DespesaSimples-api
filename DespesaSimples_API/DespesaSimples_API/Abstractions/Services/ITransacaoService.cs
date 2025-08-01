@@ -15,6 +15,7 @@ public interface ITransacaoService
 
     Task<bool> CriarTransacaoAPartirDaFixaAsync(TransacaoDto dto);
     Task<bool> CriarTransacoesAPartirDaFixaAsync(TransacaoDto transacaoDto, DateTime? dataTermino, List<Tag> tags);
+    Task<bool> CriarTransacaoAsync(TransacaoCriacaoDto transacaoCriacaoDto);
 
     Task<bool> AtualizarTransacaoAPartirDaFixaAsync(int id, TransacaoDto dto, List<Tag> tags);
     Task<bool> AtualizarDiaTransacoesFuturasAsync(TipoCategoriaEnum tipo, int idCategoria, int novoDia, int anoAtual,

@@ -1,6 +1,7 @@
 ﻿using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Entities;
-using DespesaSimples_API.Mappers.Grouping;
+using DespesaSimples_API.Enums;
+using DespesaSimples_API.Util;
 
 namespace DespesaSimples_API.Mappers;
 
@@ -31,8 +32,8 @@ public static class TransacaoMapper
 
     public static Transacao MapTransacaoDtoParaTransacao(TransacaoDto dto)
     {
-        var idTransacaoFixa = dto.IdTransacao.EndsWith('F') 
-            ? int.Parse(dto.IdTransacao[..^1]) 
+        var idTransacaoFixa = dto.IdTransacao.EndsWith('F')
+            ? int.Parse(dto.IdTransacao[..^1])
             : (int?)null;
 
         return new Transacao
@@ -48,6 +49,28 @@ public static class TransacaoMapper
             IdCategoria = dto.IdCategoria,
             IdCartao = dto.IdCartao,
             IdTransacaoFixa = idTransacaoFixa
+        };
+    }
+    
+    public static Transacao MapTransacaoCriacaoDtoParaTransacao(TransacaoCriacaoDto dto)
+    {
+        return new Transacao
+        {
+            Descricao = dto.Descricao,
+            Valor = dto.Valor,
+            Dia = dto.DataVencimento.Day,
+            Mes = dto.DataVencimento.Month,
+            Ano = dto.DataVencimento.Year,
+            DataTransacao = dto.DataTransacao,
+            Tipo = dto.Tipo,
+            Status = dto.Finalizada
+                ? nameof(StatusTransacaoEnum.Finalizada)
+                : StatusCalculadorUtil.CalculaStatus(
+                    dto.DataVencimento.Day,
+                    dto.DataVencimento.Month,
+                    dto.DataVencimento.Year),
+            IdCategoria = IdUtil.ParseIdToInt(dto.Categoria, (char)TipoCategoriaEnum.Categoria),
+            IdCartao = IdUtil.ParseIdToInt(dto.Cartao, (char)TipoCategoriaEnum.Cartao)
         };
     }
 }

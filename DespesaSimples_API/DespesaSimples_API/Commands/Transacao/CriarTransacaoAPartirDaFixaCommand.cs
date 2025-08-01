@@ -2,7 +2,7 @@ using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Dtos.Transacao;
 using MediatR;
 
-namespace DespesaSimples_API.Commands;
+namespace DespesaSimples_API.Commands.Transacao;
 
 public record CriarTransacaoAPartirDaFixaCommand(TransacaoDto Dto) : IRequest<bool>;
 

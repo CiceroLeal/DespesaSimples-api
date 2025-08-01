@@ -123,4 +123,18 @@ public static class TransacaoFixaMapper
             SubTransacoes = []
         };
     }
+    
+    public static TransacaoFixa MapTransacaoCriacaoDtoParaTransacaoFixa(TransacaoCriacaoDto dto)
+    {
+        return new TransacaoFixa
+        {
+            Valor = dto.Valor,
+            Descricao = dto.Descricao,
+            DataInicio = dto.DataVencimento,
+            DataTermino = dto.DataTermino,
+            IdCategoria = IdUtil.ParseIdToInt(dto.Categoria, (char)TipoCategoriaEnum.Categoria),
+            IdCartao = IdUtil.ParseIdToInt(dto.Cartao, (char)TipoCategoriaEnum.Cartao),
+            Tipo = dto.Tipo,
+        };
+    }
 }

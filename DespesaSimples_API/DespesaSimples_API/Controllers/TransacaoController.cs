@@ -1,6 +1,7 @@
 ﻿using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Enums;
+using DespesaSimples_API.Exceptions;
 using DespesaSimples_API.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -101,6 +102,59 @@ public static class TransacaoController
         {
             logger.LogError(ex, "Erro ao criar transação");
             return ApiResultsUtil.BadRequest("Erro ao criar transação");
+        }
+    }
+    
+    public static async Task<IResult> AtualizarTransacaoAsync(
+        ILogger<TransacaoDto> logger,
+        ITransacaoService transacaoService,
+        int transacaoId,
+        [FromQuery(Name = "parcelas")]bool? editarParcelas,
+        TransacaoAtualizacaoDto transacaoAtualizacaoDto)
+    {
+        try
+        {
+            var result = await transacaoService
+                .AtualizarTransacaoAsync(transacaoId, transacaoAtualizacaoDto, editarParcelas ?? false);
+
+            return result
+                ? ApiResultsUtil.Success("Transação atualizada com sucesso")
+                : ApiResultsUtil.BadRequest("Erro ao atualizar transação");
+        }
+        catch (NotFoundException)
+        {
+            return ApiResultsUtil.NotFound("Transação não encontrada");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Erro ao atualizar transação");
+            return ApiResultsUtil.BadRequest("Erro ao atualizar transação");
+        }
+    }
+    
+    public static async Task<IResult> AtualizarTransacaoFuturaAsync(
+        ILogger<TransacaoDto> logger,
+        ITransacaoService transacaoService,
+        string transacaoFuturaId,
+        TransacaoFuturaAtualizacaoDto transacaoAtualizacaoDto)
+    {
+        try
+        {
+            var result = await transacaoService
+                .AtualizarTransacaoFixaFuturaAsync(transacaoFuturaId, transacaoAtualizacaoDto);
+
+            return result
+                ? ApiResultsUtil.Success("Transação atualizada com sucesso")
+                : ApiResultsUtil.BadRequest("Erro ao atualizar transação");
+        }
+        catch (NotFoundException)
+        {
+            return ApiResultsUtil.NotFound("Transação não encontrada");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Erro ao atualizar transação");
+            return ApiResultsUtil.BadRequest("Erro ao atualizar transação");
         }
     }
 }

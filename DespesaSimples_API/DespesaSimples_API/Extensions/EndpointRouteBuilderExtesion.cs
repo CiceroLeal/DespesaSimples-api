@@ -46,14 +46,28 @@ public static class EndpointRouteBuilderExtension
         var transacoesComIdEndpoints = transacoesEndpoints.MapGroup("/{transacaoId:int}");
 
         transacoesEndpoints.MapGet("", TransacaoController.GetTransacoesAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
             .AddEndpointFilter<GetTransacoesValidationFilter>()
             .WithName("GetTransacoes");
 
         transacoesComIdEndpoints.MapGet("", TransacaoController.GetTransacaoPorIdAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
             .WithName("GetTransacao");
         
         transacoesEndpoints.MapPost("", TransacaoController.CriarTransacaoAsync)
+            .AddEndpointFilter<TransacaoCriacaoDtoValidationFilter>()
             .WithName("CreateTransacao");
+        
+        transacoesComIdEndpoints.MapPut("", TransacaoController.AtualizarTransacaoAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<TransacaoAtualizacaoDtoValidationFilter>()
+            .WithName("UpdateTransacao");
+        
+        transacoesFuturasEndpoints.MapPut("", TransacaoController.AtualizarTransacaoFuturaAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>()
+            .AddEndpointFilter<TransacaoFuturaAtualizacaoDtoValidationFilter>()
+            .AddEndpointFilter<MesAnoValidationFilter>()
+            .WithName("UpdateTransacaoFutura");
 
 
         //TRANSACOES FUTURAS

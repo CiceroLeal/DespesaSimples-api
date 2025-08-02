@@ -17,10 +17,12 @@ public interface ITransacaoService
     Task<bool> CriarTransacoesAPartirDaFixaAsync(TransacaoDto transacaoDto, DateTime? dataTermino, List<Tag> tags);
     Task<bool> CriarTransacaoAsync(TransacaoCriacaoDto transacaoCriacaoDto);
 
+    Task<bool> AtualizarTransacaoAsync(int id, TransacaoAtualizacaoDto dto, bool? editarParcelas);
     Task<bool> AtualizarTransacaoAPartirDaFixaAsync(int id, TransacaoDto dto, List<Tag> tags);
-    Task<bool> AtualizarDiaTransacoesFuturasAsync(TipoCategoriaEnum tipo, int idCategoria, int novoDia, int anoAtual,
+    Task<bool> AtualizarDiaTransacoesFuturasAsync(TipoCategoriaEnum tipo, int id, int novoDia, int anoAtual,
         int mesAtual);
     Task<bool> AtualizarTransacoesAPartirDaFixaAsync(int idTransacaoFixa, TransacaoDto dto, List<Tag> tags);
+    Task<bool> AtualizarTransacaoFixaFuturaAsync(string idTransacaoFixa, TransacaoFuturaAtualizacaoDto dto);
 
     Task<bool> RemoverTransacaoPorIdAsync(int id);
     Task<bool> RemoverTransacoesPorIdTransacaoFixaAsync(int idTransacaoFixa);

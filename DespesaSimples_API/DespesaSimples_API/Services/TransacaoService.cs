@@ -3,6 +3,7 @@ using DespesaSimples_API.Abstractions.Repositories;
 using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.Abstractions.Services.Factories;
 using DespesaSimples_API.Commands;
+using DespesaSimples_API.Commands.Transacao;
 using DespesaSimples_API.Commands.TransacaoFixa;
 using DespesaSimples_API.Dtos.Transacao;
 using DespesaSimples_API.Entities;
@@ -129,14 +130,10 @@ public class TransacaoService(
 
     public async Task<bool> CriarTransacaoAPartirDaFixaAsync(TransacaoDto dto)
     {
-        var transacao = TransacaoMapper.MapTransacaoDtoParaTransacao(dto);
         var tags = await mediator.Send(new BuscarAtualizarTagsCommand(dto.Tags ?? []));
+        var transacao = TransacaoMapper.MapDtoParaTransacao(dto, tags);
 
-        transacao.IdTransacaoFixa = int.Parse(
-            dto.IdTransacao.EndsWith('F') ? dto.IdTransacao[..^1] : dto.IdTransacao
-        );
-
-        transacao.Tags = tags;
+        transacao.IdTransacaoFixa = IdUtil.ParseIdToInt(dto.IdTransacao, 'F');
 
         return await transacaoRepository.CriarTransacaoAsync(transacao);
     }
@@ -149,16 +146,13 @@ public class TransacaoService(
         while (dataAtualizacao.Year < dataFim.Year ||
                (dataAtualizacao.Year == dataFim.Year && dataAtualizacao.Month <= dataFim.Month))
         {
-            var transacao = TransacaoMapper.MapTransacaoDtoParaTransacao(dto);
+            var transacao = TransacaoMapper.MapDtoParaTransacao(dto, tags);
 
-            transacao.IdTransacaoFixa = int.Parse(
-                dto.IdTransacao.EndsWith('F') ? dto.IdTransacao[..^1] : dto.IdTransacao
-            );
+            transacao.IdTransacaoFixa = IdUtil.ParseIdToInt(dto.IdTransacao, 'F');
 
             transacao.Dia = dataAtualizacao.Day;
             transacao.Mes = dataAtualizacao.Month;
             transacao.Ano = dataAtualizacao.Year;
-            transacao.Tags = tags;
 
             await transacaoRepository.CriarTransacaoAsync(transacao);
 
@@ -194,20 +188,25 @@ public class TransacaoService(
 
         return sucesso;
     }
+    
+    public async Task<bool> AtualizarTransacaoFixaFuturaAsync(string idTransacaoFixa, TransacaoFuturaAtualizacaoDto dto)
+    {
+        return await mediator.Send(new AtualizarTransacaoFixaFuturaCommand(idTransacaoFixa, dto));
+    }
 
     public async Task<bool> AtualizarDiaTransacoesFuturasAsync(
         TipoCategoriaEnum tipo,
-        int idCategoria,
+        int id,
         int novoDia,
         int anoAtual,
         int mesAtual)
     {
         if (tipo == TipoCategoriaEnum.Categoria)
             return await transacaoRepository
-                .AtualizarDiaTransacoesFuturasPorCategoriaAsync(idCategoria, novoDia, anoAtual, mesAtual);
+                .AtualizarDiaTransacoesFuturasPorCategoriaAsync(id, novoDia, anoAtual, mesAtual);
 
         return await transacaoRepository
-            .AtualizarDiaTransacoesFuturasPorCartaoAsync(idCategoria, novoDia, anoAtual, mesAtual);
+            .AtualizarDiaTransacoesFuturasPorCartaoAsync(id, novoDia, anoAtual, mesAtual);
     }
 
     public async Task<bool> AtualizarTransacoesAPartirDaFixaAsync(int idTransacaoFixa, TransacaoDto dto, List<Tag> tags)
@@ -234,6 +233,24 @@ public class TransacaoService(
         {
             return false;
         }
+    }
+    
+    public async Task<bool> AtualizarTransacaoAsync(
+        int id,
+        TransacaoAtualizacaoDto dto,
+        bool? editarParcelas)
+    {
+        var transacao = await transacaoRepository.BuscarTransacaoPorIdAsync(id);
+        
+        if (transacao == null)
+            throw new NotFoundException("Transação não encontrada.");
+
+        if (editarParcelas == true && transacao.GrupoParcelasId is { } gid)
+        {
+            return await mediator.Send(new AtualizarTransacaoGrupoCommand(gid, dto));
+        }
+
+        return await mediator.Send(new AtualizarTransacaoUnicaCommand(id, dto));
     }
 
     public async Task<bool> RemoverTransacaoPorIdAsync(int id)

@@ -13,8 +13,7 @@ public class TransacaoFactory : ITransacaoFactory
         if (dto.Parcelas > 0) 
             return GerarTransacoesParceladas(dto, tags);
         
-        var transacao = TransacaoMapper.MapTransacaoCriacaoDtoParaTransacao(dto);
-        transacao.Tags = tags;
+        var transacao = TransacaoMapper.MapCriacaoDtoParaTransacao(dto, tags);
         
         return [transacao];
     }
@@ -60,13 +59,12 @@ public class TransacaoFactory : ITransacaoFactory
         TransacaoCriacaoDto dto, List<Tag> tags, string grupoParcelasId,
         int numeroParcela, int totalParcelas, int mes, int ano)
     {
-        var transacao = TransacaoMapper.MapTransacaoCriacaoDtoParaTransacao(dto);
+        var transacao = TransacaoMapper.MapCriacaoDtoParaTransacao(dto, tags);
         
         transacao.Mes = mes;
         transacao.Ano = ano;
         transacao.Parcela = $"{numeroParcela}/{totalParcelas}";
         transacao.GrupoParcelasId = grupoParcelasId;
-        transacao.Tags = tags;
         transacao.DataTransacao = null;
         
         return transacao;

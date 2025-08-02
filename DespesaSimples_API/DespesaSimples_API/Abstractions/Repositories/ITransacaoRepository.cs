@@ -11,15 +11,19 @@ public interface ITransacaoRepository
     Task<Transacao?> BuscarUltimaTransacaoPorIdFixaAsync(int id);
     Task<List<Transacao>> BuscarTransacaoPorIdFixaAsync(int idTransacaoFixa);
     Task<List<Transacao>> BuscarTransacoesDeletadasPorMesAnoAsync(int ano, int mes, TipoTransacaoEnum? tipo = null);
+    Task<List<Transacao>> BuscarTransacaoPorGrpParcelaIdAsync(string idGrpParcela);
     Task<decimal> SomarPorTipoAsync(TipoTransacaoEnum tipo, int ano, int mes);
     
     Task<bool> CriarTransacaoAsync(Transacao transacao);
     Task<List<Transacao>> CriarTransacaoAsync(List<Transacao> transacoes);
     
     Task<bool> AtualizarTransacaoAsync(Transacao transacao);
+    Task<bool> AtualizarTransacoesAsync(List<Transacao> transacoes);
     Task<bool> AtualizarDiaTransacoesFuturasPorCategoriaAsync(int idCategoria, int novoDia, int anoAtual, int mesAtual);
     Task<bool> AtualizarDiaTransacoesFuturasPorCartaoAsync(int idCartao, int novoDia, int anoAtual, int mesAtual);
     
     Task<bool> RemoverTransacaoAsync(int id);
     Task<bool> RemoverTransacoesPorIdTransacaoFixaAsync(int idTransacaoFixa);
+
+    Task<bool> SaveChangesAsync();
 }

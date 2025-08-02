@@ -30,7 +30,7 @@ public static class TransacaoMapper
         };
     }
 
-    public static Transacao MapTransacaoDtoParaTransacao(TransacaoDto dto)
+    public static Transacao MapDtoParaTransacao(TransacaoDto dto, List<Tag> tags)
     {
         var idTransacaoFixa = dto.IdTransacao.EndsWith('F')
             ? int.Parse(dto.IdTransacao[..^1])
@@ -48,11 +48,12 @@ public static class TransacaoMapper
             Status = dto.Status ?? string.Empty,
             IdCategoria = dto.IdCategoria,
             IdCartao = dto.IdCartao,
-            IdTransacaoFixa = idTransacaoFixa
+            IdTransacaoFixa = idTransacaoFixa,
+            Tags = tags
         };
     }
     
-    public static Transacao MapTransacaoCriacaoDtoParaTransacao(TransacaoCriacaoDto dto)
+    public static Transacao MapCriacaoDtoParaTransacao(TransacaoCriacaoDto dto, List<Tag> tags)
     {
         return new Transacao
         {
@@ -70,7 +71,52 @@ public static class TransacaoMapper
                     dto.DataVencimento.Month,
                     dto.DataVencimento.Year),
             IdCategoria = IdUtil.ParseIdToInt(dto.Categoria, (char)TipoCategoriaEnum.Categoria),
-            IdCartao = IdUtil.ParseIdToInt(dto.Cartao, (char)TipoCategoriaEnum.Cartao)
+            IdCartao = IdUtil.ParseIdToInt(dto.Cartao, (char)TipoCategoriaEnum.Cartao),
+            Tags = tags
         };
+    }
+    
+    public static void MapAtualizacaoDtoParaEntidade(TransacaoAtualizacaoDto dto, Transacao entidade, List<Tag> tags)
+    {
+        entidade.Valor = dto.Valor;
+        entidade.Descricao = dto.Descricao;
+        entidade.Dia = dto.DataVencimento.Day;
+         
+        // Apenas o dia é propagado para as parcelas. Mês e Ano são mantidos.
+        if (entidade.GrupoParcelasId == null)
+        {
+            entidade.Mes = dto.DataVencimento.Month;
+            entidade.Ano = dto.DataVencimento.Year;
+        }
+         
+        entidade.DataTransacao = dto.DataTransacao;
+        entidade.IdCategoria = IdUtil.ParseIdToInt(dto.Categoria, (char)TipoCategoriaEnum.Categoria);
+        entidade.IdCartao = IdUtil.ParseIdToInt(dto.Cartao, (char)TipoCategoriaEnum.Cartao);
+        entidade.Status = dto.Finalizada 
+            ? nameof(StatusTransacaoEnum.Finalizada) 
+            : StatusCalculadorUtil.CalculaStatus(entidade.Dia.Value, entidade.Mes, entidade.Ano);
+        entidade.Tags = tags;
+    }
+    
+    public static void MapFuturaAtualizacaoDtoParaEntidade(TransacaoFuturaAtualizacaoDto dto, TransacaoFixa transacaoFixa, Transacao entidade, List<Tag> tags)
+    {
+        entidade.IdTransacaoFixa = transacaoFixa.IdTransacaoFixa;
+        entidade.Tipo = transacaoFixa.Tipo;
+        entidade.Descricao = dto.Descricao;
+        entidade.Valor = dto.Valor;
+        entidade.Dia = dto.DataVencimento.Day;
+        entidade.Mes = dto.DataVencimento.Month;
+        entidade.Ano = dto.DataVencimento.Year;
+        entidade.DataTransacao = dto.DataTransacao;
+        entidade.Tags = tags;
+ 
+        var idCategoria = IdUtil.ParseIdToInt(dto.Categoria, (char)TipoCategoriaEnum.Categoria);
+        var idCartao = IdUtil.ParseIdToInt(dto.Cartao, (char)TipoCategoriaEnum.Cartao);
+ 
+        entidade.IdCategoria = idCategoria ?? transacaoFixa.IdCategoria;
+        entidade.IdCartao = idCartao ?? transacaoFixa.IdCartao;
+ 
+        entidade.Status = dto.Finalizada ? nameof(StatusTransacaoEnum.Finalizada) :
+            StatusCalculadorUtil.CalculaStatus(entidade.Dia.Value, entidade.Mes, entidade.Ano);
     }
 }

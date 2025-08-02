@@ -29,15 +29,7 @@ public class TagRepository : ITagRepository
             .Where(g => g.IdTag == id)
             .FirstOrDefaultAsync();
     }
-
-    public async Task<bool> CriarTagAsync(Tag tag)
-    {
-        tag.UsuarioId = _dsContext.CurrentUserId ?? "";
-        await _dsContext.Tags.AddAsync(tag);
-        await _dsContext.SaveChangesAsync();
-        return true;
-    }
-
+    
     public async Task<List<Tag>> BuscarTagsPorIdsAsync(List<int> ids)
     {
         return await _dsContext.Tags
@@ -51,19 +43,13 @@ public class TagRepository : ITagRepository
             .OrderBy(t => t.Nome)
             .ToListAsync();
     }
-    
-    public async Task<bool> RemoverTagAsync(int id)
+
+    public async Task<bool> CriarTagAsync(Tag tag)
     {
-        var tag = await _dsContext.Tags
-            .FirstOrDefaultAsync(t => t.IdTag == id);
-        
-        if (tag == null)
-            return false;
-        
-        _dsContext.Tags.Remove(tag);
-        
-        var registrosAfetados = await _dsContext.SaveChangesAsync();
-        return registrosAfetados > 0;
+        tag.UsuarioId = _dsContext.CurrentUserId ?? "";
+        await _dsContext.Tags.AddAsync(tag);
+        await _dsContext.SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> AtualizarTagAsync(Tag tag)
@@ -80,6 +66,20 @@ public class TagRepository : ITagRepository
         
         await _dsContext.SaveChangesAsync();
         return true;
+    }
+    
+    public async Task<bool> RemoverTagAsync(int id)
+    {
+        var tag = await _dsContext.Tags
+            .FirstOrDefaultAsync(t => t.IdTag == id);
+        
+        if (tag == null)
+            return false;
+        
+        _dsContext.Tags.Remove(tag);
+        
+        var registrosAfetados = await _dsContext.SaveChangesAsync();
+        return registrosAfetados > 0;
     }
     
     public async Task<List<Tag>> UpsertTagsAsync(List<string> nomesTags)

@@ -34,19 +34,26 @@ public class CategoriaRepository : ICategoriaRepository
             .Where(g => g.IdCategoria == id)
             .FirstOrDefaultAsync();
     }
-
-    public async Task<bool> RemoverCategoriaAsync(int id)
+    
+    public async Task<List<Categoria>> BuscarCategoriaEPaisAsync(int id)
     {
-        var categoria = await _dsContext.Categorias
+        var resultado = new List<Categoria>();
+        var atual = await _dsContext.Categorias
+            .Include(c => c.CategoriaPai)
             .FirstOrDefaultAsync(c => c.IdCategoria == id);
         
-        if (categoria == null)
-            return false;
-        
-        _dsContext.Categorias.Remove(categoria);
-        
-        var registrosAfetados = await _dsContext.SaveChangesAsync();
-        return registrosAfetados > 0;
+        while (atual != null)
+        {
+            resultado.Add(atual);
+            if (atual.IdCategoriaPai == null) 
+                break;
+            
+            atual = await _dsContext.Categorias
+                .Include(c => c.CategoriaPai)
+                .FirstOrDefaultAsync(c => c.IdCategoria == atual.IdCategoriaPai.Value);
+        }
+
+        return resultado;
     }
 
     public async Task<bool> CriarCategoriaAsync(Categoria categoria)
@@ -74,24 +81,17 @@ public class CategoriaRepository : ICategoriaRepository
         return true;
     }
     
-    public async Task<List<Categoria>> BuscarCategoriaEPaisAsync(int id)
+    public async Task<bool> RemoverCategoriaAsync(int id)
     {
-        var resultado = new List<Categoria>();
-        var atual = await _dsContext.Categorias
-            .Include(c => c.CategoriaPai)
+        var categoria = await _dsContext.Categorias
             .FirstOrDefaultAsync(c => c.IdCategoria == id);
         
-        while (atual != null)
-        {
-            resultado.Add(atual);
-            if (atual.IdCategoriaPai == null) 
-                break;
-            
-            atual = await _dsContext.Categorias
-                .Include(c => c.CategoriaPai)
-                .FirstOrDefaultAsync(c => c.IdCategoria == atual.IdCategoriaPai.Value);
-        }
-
-        return resultado;
+        if (categoria == null)
+            return false;
+        
+        _dsContext.Categorias.Remove(categoria);
+        
+        var registrosAfetados = await _dsContext.SaveChangesAsync();
+        return registrosAfetados > 0;
     }
 } 

@@ -4,6 +4,7 @@ using DespesaSimples_API.Abstractions.Services;
 using DespesaSimples_API.DbContexts;
 using DespesaSimples_API.Entities;
 using DespesaSimples_API.Enums;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace DespesaSimples_API.Repositories;
@@ -85,6 +86,13 @@ public class TransacaoRepository : ITransacaoRepository
             .ToListAsync();
     }
     
+    public async Task<List<Transacao>> BuscarTransacaoPorGrpParcelaIdAsync(string idGrpParcela)
+    {
+        return await _dsContext.Transacoes
+            .Where(d => d.GrupoParcelasId == idGrpParcela)
+            .ToListAsync();
+    }
+    
     public async Task<decimal> SomarPorTipoAsync(TipoTransacaoEnum tipo, int ano, int mes)
     {
         return await _dsContext.Transacoes
@@ -110,7 +118,26 @@ public class TransacaoRepository : ITransacaoRepository
 
     public async Task<bool> AtualizarTransacaoAsync(Transacao transacao)
     {
+        var existTransacao = await _dsContext.Transacoes
+            .FirstOrDefaultAsync(t => t.IdTransacao == transacao.IdTransacao);
+        
+        if (existTransacao == null)
+            return false;
+        
+        _dsContext
+            .Entry(existTransacao)
+            .CurrentValues.SetValues(transacao);
+        
         await _dsContext.SaveChangesAsync();
+        return true;
+    }
+    
+    public async Task<bool> AtualizarTransacoesAsync(List<Transacao> transacoes)
+    {
+        if (transacoes.Count == 0)
+            return false;
+
+        await _dsContext.BulkUpdateAsync(transacoes);
         return true;
     }
 
@@ -164,6 +191,13 @@ public class TransacaoRepository : ITransacaoRepository
 
         _dsContext.Transacoes.RemoveRange(transacoes);
 
+        var registrosAfetados = await _dsContext.SaveChangesAsync();
+
+        return registrosAfetados > 0;
+    }
+    
+    public async Task<bool> SaveChangesAsync()
+    {
         var registrosAfetados = await _dsContext.SaveChangesAsync();
 
         return registrosAfetados > 0;
